@@ -50,11 +50,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Commands\ActionsToolWindowCommand.cs" />
     <Compile Include="GitHubActionsVSPackage.cs" />
-    <Compile Include="source.extension.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>source.extension.vsixmanifest</DependentUpon>
-    </Compile>
+    <Compile Include="source.vsixinfo.cs" />
     <Compile Include="ToolWindows\GHActionsToolWindow.xaml.cs">
       <DependentUpon>GHActionsToolWindow.xaml</DependentUpon>
     </Compile>
@@ -73,7 +69,6 @@
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
       <Generator>VsixManifestGenerator</Generator>
-      <LastGenOutput>source.extension.cs</LastGenOutput>
     </None>
     <Content Include="lib\win32\arm64\git2-e632535.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -133,6 +128,11 @@
       <Version>2.0.320</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="17.6.2164">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Nerdbank.GitVersioning">
+      <Version>3.6.133</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
