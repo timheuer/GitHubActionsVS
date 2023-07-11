@@ -1,0 +1,32 @@
+name: "Publish"
+
+on:
+  workflow_dispatch:
+    branches:
+      - main
+    paths-ignore:
+      - '**/*.md'
+      - '**/*.gitignore'
+      - '**/*.gitattributes'
+      
+jobs:
+  build:
+    name: Build and Test
+    uses: ./.github/workflows/_build.yaml
+
+  publish:
+    needs: build
+    name: Publish
+    runs-on: windows-2022
+
+    steps:
+    - name: Download Package artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: ${{ github.event.repository.name }}.vsix
+    
+    - name: Upload to Open VSIX
+      uses: timheuer/openvsixpublish@v1
+      with:
+        vsix-file: ${{ github.event.repository.name }}.vsix
+    
