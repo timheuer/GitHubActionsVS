@@ -1,0 +1,155 @@
+﻿using GitHubActionsVS.Helpers;
+using Octokit;
+using System.Diagnostics;
+using System.IO;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+
+namespace GitHubActionsVS;
+/// <summary>
+/// Interaction logic for GHActionsToolWindow.xaml
+/// </summary>
+public partial class GHActionsToolWindow : UserControl
+{
+    RepoInfo repoInfo = null;
+
+    public GHActionsToolWindow()
+    {
+        InitializeComponent();
+        repoInfo = new();
+
+        _ = GetRepoInfoAsync();
+    }
+
+    private async Task GetRepoInfoAsync()
+    {
+        // find the git folder
+        var project = await VS.Solutions.GetActiveProjectAsync();
+        var projectPath = project.FullPath;
+
+        repoInfo.FindGitFolder(projectPath, out string gitPath);
+
+        if (string.IsNullOrEmpty(gitPath))
+        {
+            Debug.WriteLine("No git repo found");
+            return;
+        }
+        else
+        {
+            Debug.WriteLine($"Found git repo at {gitPath}");
+            // if not a github repo, bail
+            if (!repoInfo.IsGitHub)
+            {
+                Debug.WriteLine("Not a GitHub repo");
+                return;
+            }
+            else
+            {
+                Debug.WriteLine($"GitHub repo: {repoInfo.RepoOwner}/{repoInfo.RepoName}");
+                // load the data
+                await LoadDataAsync();
+            }
+        }
+    }
+
+    private async Task LoadDataAsync()
+    {
+        var creds = CredentialManager.GetCredentials("git:https://github.com");
+        var github = new GitHubClient(new ProductHeaderValue("VisualStudio"));
+        //var token = Environment.GetEnvironmentVariable("GITHUB_PAT_VS");
+        //Credentials ghCreds = new Credentials(token);
+        Credentials ghCreds = new Credentials(creds.Username, creds.Password);
+        github.Credentials = ghCreds;
+
+        var style1 = this.TryFindResource("EmojiTreeViewItem") as Style;
+
+        if (style1 is null)
+        {
+            Debug.WriteLine("did not find style");
+        }
+
+        try
+        {
+            // get secrets
+            var repoSecrets = await github.Repository?.Actions?.Secrets?.GetAll(repoInfo.RepoOwner, repoInfo.RepoName);
+            foreach (var secret in repoSecrets.Secrets)
+            {
+                var item = new TreeViewItem();
+                item.Header = secret.Name;
+                item.Tag = secret;
+                tvSecrets.Items.Add(item);
+            }
+
+            // get workflows
+            var workflows = await github.Actions?.Workflows?.List(repoInfo.RepoOwner, repoInfo.RepoName);
+            foreach (var workflow in workflows.Workflows)
+            {
+                var item = new TreeViewItem();
+                item.Header = workflow.Name;
+                item.Tag = workflow;
+                tvWorkflows.Items.Add(item);
+            }
+
+            // get current branch
+            var runs = await github.Actions?.Workflows?.Runs?.List(repoInfo.RepoOwner, repoInfo.RepoName, new WorkflowRunsRequest() { Branch = repoInfo.CurrentBranch }, new ApiOptions() { PageCount = 2, PageSize = 10 });
+            foreach (var run in runs.WorkflowRuns)
+            {
+                var item = new TreeViewItem();
+                item.Header = $"{run.Name} #{run.RunNumber}";
+                item.Tag = run;
+
+                // iterate through the run
+                var jobs = await github.Actions?.Workflows?.Jobs?.List(repoInfo.RepoOwner, repoInfo.RepoName, run.Id);
+                foreach (var job in jobs.Jobs)
+                {
+                    var jobItem = new TreeViewItem();
+                    jobItem.Header = job.Name;
+                    jobItem.Tag = job;
+
+                    // iterate through the job          
+                    foreach (var step in job.Steps)
+                    {
+                        var stepItem = new TreeViewItem();
+                        stepItem.Style = style1;
+                        stepItem.Header = $"{GetStatusIcon(step.Conclusion.Value)}: {step.Name}";
+                        stepItem.Tag = step;
+                        jobItem.Items.Add(stepItem);
+                    }
+
+                    item.Items.Add(jobItem);
+                }
+                tvCurrentBranch.Items.Add(item);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
+    }
+
+    private string GetStatusIcon(StringEnum<WorkflowJobConclusion> status)
+    {
+
+        switch (status.Value)
+        {
+            case WorkflowJobConclusion.Success:
+                return "✅";
+            case WorkflowJobConclusion.Failure:
+                return "❌";
+            case WorkflowJobConclusion.Cancelled:
+                return "🚫";
+            case WorkflowJobConclusion.Skipped:
+                return "⏭";
+            default:
+                return "🤷‍♂️";
+        }
+    }
+
+    private void JobItem_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    {
+        throw new NotImplementedException();
+    }
+}
+

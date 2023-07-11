@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<Extern href="stdidcmd.h"/>
+	<Extern href="vsshlids.h"/>
+	<Include href="KnownImageIds.vsct"/>
+	<Include href="VSGlobals.vsct"/>
+
+	<Commands package="GitHubActionsVS">
+		<!--This section defines the elements the user can interact with, like a menu command or a button or combo box in a toolbar. -->
+		<Buttons>
+			<Button guid="GitHubActionsVS" id="ActionsCommand" priority="0x0100" type="Button">
+				<Parent guid="VSMainMenu" id="View.DevWindowsGroup"/>
+				<!-- using the ID for PublishWithGitHubActions because knownimageid is not working -->
+				<Icon guid="ImageCatalogGuid" id="3881" />
+				<CommandFlag>IconIsMoniker</CommandFlag>
+				<Strings>
+					<ButtonText>GitHub Actions</ButtonText>
+					<LocCanonicalName>.View.GitHubActions</LocCanonicalName>
+				</Strings>
+			</Button>
+		</Buttons>
+	</Commands>
+
+	<Symbols>
+		<GuidSymbol name="GitHubActionsVS" value="{39792190-7ea1-477e-8f95-28a1132e1fc9}">
+			<IDSymbol name="ActionsCommand" value="0x0100" />
+		</GuidSymbol>
+	</Symbols>
+</CommandTable>
