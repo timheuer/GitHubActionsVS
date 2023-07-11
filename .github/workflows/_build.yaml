@@ -1,0 +1,29 @@
+﻿name: "Build"
+
+on: workflow_call
+      
+jobs:
+  build:
+    outputs:
+      version: ${{ steps.vsix_version.outputs.version-number }}
+    name: Build 
+    runs-on: windows-2022
+      
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: 🧰 Setup .NET build dependencies
+      uses: timheuer/bootstrap-dotnet@v1
+      with:
+        nuget: 'false'
+        sdk: 'false'
+        msbuild: 'true'
+
+    - name: 🏗️ Build
+      run: msbuild /p:Configuration=Release /v:m -restore /p:OutDir=\_built
+
+    - name: ⬆️ Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ github.event.repository.name }}.vsix
+        path: /_built/**/*.vsix
