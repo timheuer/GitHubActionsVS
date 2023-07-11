@@ -3,7 +3,7 @@
     <Metadata>
         <Identity Id="TimHeuer.GitHubActions" Version="|%CurrentProject%;GetBuildVersion|" Language="en-US" Publisher="Tim Heuer" />
         <DisplayName>GitHub Actions</DisplayName>
-        <Description xml:space="preserve">A window that provides a view of GitHub Actions for the current repo of the opened solution in Visual StudioA </Description>
+        <Description xml:space="preserve">A window that provides a view of GitHub Actions for the current repo of the opened solution in Visual Studio</Description>
         <MoreInfo>https://github.com/timheuer/GitHubActionsVS</MoreInfo>
         <License>LICENSE</License>
         <GettingStartedGuide>https://github.com/timheuer/GitHubActionsVS</GettingStartedGuide>
