@@ -1,4 +1,4 @@
-﻿name: "Build"
+﻿name: "Base build"
 
 on: workflow_call
       
@@ -8,6 +8,8 @@ jobs:
       version: ${{ steps.vsix_version.outputs.version-number }}
     name: Build 
     runs-on: windows-2022
+    env:
+        PROJECT_PATH: "src/GitHubActionsVS.sln"
       
     steps:
     - uses: actions/checkout@v3
@@ -20,7 +22,7 @@ jobs:
         msbuild: 'true'
 
     - name: 🏗️ Build
-      run: msbuild /p:Configuration=Release /v:m -restore /p:OutDir=\_built
+      run: msbuild ${{ env.PROJECT_PATH }} /p:Configuration=Release /v:m -restore /p:OutDir=\_built
 
     - name: ⬆️ Upload artifact
       uses: actions/upload-artifact@v3
