@@ -137,7 +137,8 @@ public partial class GHActionsToolWindow : UserControl
             foreach (var run in runs.WorkflowRuns)
             {
                 var item = new TreeViewItem();
-                item.Header = $"{run.Name} #{run.RunNumber}";
+                item.Style = style1;
+                item.Header = $"{GetConclusionIndicator(run.Conclusion.Value.StringValue.ToString())} {run.Name} #{run.RunNumber}";
                 item.Tag = run;
 
                 // iterate through the run
@@ -145,7 +146,8 @@ public partial class GHActionsToolWindow : UserControl
                 foreach (var job in jobs.Jobs)
                 {
                     var jobItem = new TreeViewItem();
-                    jobItem.Header = job.Name;
+                    jobItem.Style = style1;
+                    jobItem.Header = $"{GetConclusionIndicator(job.Conclusion.Value.StringValue.ToString())} {job.Name}";
                     jobItem.Tag = job;
 
                     // iterate through the job          
@@ -153,7 +155,7 @@ public partial class GHActionsToolWindow : UserControl
                     {
                         var stepItem = new TreeViewItem();
                         stepItem.Style = style1;
-                        stepItem.Header = $"{GetStatusIcon(step.Conclusion.Value)}: {step.Name}";
+                        stepItem.Header = $"{GetConclusionIndicator(step.Conclusion.Value.StringValue.ToString())}: {step.Name}";
                         stepItem.Tag = step;
                         jobItem.Items.Add(stepItem);
                     }
@@ -169,18 +171,18 @@ public partial class GHActionsToolWindow : UserControl
         }
     }
 
-    private string GetStatusIcon(StringEnum<WorkflowJobConclusion> status)
+    private string GetConclusionIndicator(string status)
     {
 
-        switch (status.Value)
+        switch (status.ToLowerInvariant())
         {
-            case WorkflowJobConclusion.Success:
+            case "success":
                 return "✅";
-            case WorkflowJobConclusion.Failure:
+            case "failure":
                 return "❌";
-            case WorkflowJobConclusion.Cancelled:
+            case "cancelled":
                 return "🚫";
-            case WorkflowJobConclusion.Skipped:
+            case "skipped":
                 return "⏭";
             default:
                 return "🤷‍♂️";
