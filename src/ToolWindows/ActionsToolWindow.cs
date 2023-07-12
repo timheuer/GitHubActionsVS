@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.Imaging;
+﻿using GitHubActionsVS.ToolWindows;
+using Microsoft.VisualStudio.Imaging;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,9 +12,11 @@ public class ActionsToolWindow : BaseToolWindow<ActionsToolWindow>
 
     public override Type PaneType => typeof(Pane);
 
-    public override Task<FrameworkElement> CreateAsync(int toolWindowId, CancellationToken cancellationToken)
+    public override async Task<FrameworkElement> CreateAsync(int toolWindowId, CancellationToken cancellationToken)
     {
-        return Task.FromResult<FrameworkElement>(new GHActionsToolWindow());
+        ToolWindowMessenger toolWindowMessenger = await Package.GetServiceAsync<ToolWindowMessenger, ToolWindowMessenger>();
+
+        return new GHActionsToolWindow(toolWindowMessenger);
     }
 
     [Guid("4a4ad204-3623-4e03-b2d1-6fef94652174")]
@@ -22,6 +25,7 @@ public class ActionsToolWindow : BaseToolWindow<ActionsToolWindow>
         public Pane()
         {
             BitmapImageMoniker = KnownMonikers.ToolWindow;
+            ToolBar = new System.ComponentModel.Design.CommandID(PackageGuids.GitHubActionsVS, PackageIds.TWindowToolbar);
         }
     }
 }

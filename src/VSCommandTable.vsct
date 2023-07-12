@@ -8,9 +8,34 @@
 
 	<Commands package="GitHubActionsVS">
 		<!--This section defines the elements the user can interact with, like a menu command or a button or combo box in a toolbar. -->
+		<Menus>
+			<Menu guid="GitHubActionsVS" id="TWindowToolbar" type="ToolWindowToolbar">
+				<CommandFlag>DefaultDocked</CommandFlag>
+				<Strings>
+					<ButtonText>Tool Window Toolbar</ButtonText>
+				</Strings>
+			</Menu>
+		</Menus>
+		<Groups>
+			<Group guid="GitHubActionsVS" id="TWindowToolbarGroup" priority="0x0000">
+				<Parent guid="GitHubActionsVS" id="TWindowToolbar"/>
+			</Group>
+			<Group guid="GitHubActionsVS" id="ContextMenuGroup" priority="0x0600">
+				<Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_SOLNNODE"/>
+			</Group>
+			<Group guid="GitHubActionsVS" id="ContextMenuGroup" priority="0x0600">
+				<Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_PROJNODE"/>
+			</Group>
+			<Group guid="GitHubActionsVS" id="ContextMenuGroup" priority="0x0600">
+				<Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_WEBPROJECT"/>
+			</Group>
+			<Group guid="GitHubActionsVS" id="ContextMenuGroup" priority="0x0100">
+				<Parent guid="VSMainMenu" id="View"/>
+			</Group>
+		</Groups>
 		<Buttons>
 			<Button guid="GitHubActionsVS" id="ActionsCommand" priority="0x0100" type="Button">
-				<Parent guid="VSMainMenu" id="View.DevWindowsGroup"/>
+				<Parent guid="GitHubActionsVS" id="ContextMenuGroup"/>
 				<!-- using the ID for PublishWithGitHubActions because knownimageid is not working -->
 				<Icon guid="ImageCatalogGuid" id="3881" />
 				<CommandFlag>IconIsMoniker</CommandFlag>
@@ -19,12 +44,35 @@
 					<LocCanonicalName>.View.GitHubActions</LocCanonicalName>
 				</Strings>
 			</Button>
+			<Button guid="GitHubActionsVS" id="RefreshRepoCommand" priority="0x0001" type="Button">
+				<Parent guid="GitHubActionsVS" id="TWindowToolbarGroup"/>
+				<Icon guid="ImageCatalogGuid" id="Refresh"/>
+				<CommandFlag>IconIsMoniker</CommandFlag>
+				<Strings>
+					<ButtonText>Refresh Repo</ButtonText>
+					<LocCanonicalName>.View.RefreshRepo</LocCanonicalName>
+				</Strings>
+			</Button>
+			<Button guid="GitHubActionsVS" id="GotoRepoCommand" priority="0x0002" type="Button">
+				<Parent guid="GitHubActionsVS" id="TWindowToolbarGroup"/>
+				<Icon guid="ImageCatalogGuid" id="WebURL"/>
+				<CommandFlag>IconIsMoniker</CommandFlag>
+				<Strings>
+					<ButtonText>Open Repo in Browser</ButtonText>
+					<LocCanonicalName>.View.GotoRepo</LocCanonicalName>
+				</Strings>
+			</Button>
 		</Buttons>
 	</Commands>
 
 	<Symbols>
 		<GuidSymbol name="GitHubActionsVS" value="{39792190-7ea1-477e-8f95-28a1132e1fc9}">
+			<IDSymbol name="ContextMenuGroup" value="0x0001" />
 			<IDSymbol name="ActionsCommand" value="0x0100" />
+			<IDSymbol name="TWindowToolbar" value="0x1000" />
+			<IDSymbol name="TWindowToolbarGroup" value="0x1050" />
+			<IDSymbol name="RefreshRepoCommand" value="0x0111" />
+			<IDSymbol name="GotoRepoCommand" value="0x0112" />
 		</GuidSymbol>
 	</Symbols>
 </CommandTable>

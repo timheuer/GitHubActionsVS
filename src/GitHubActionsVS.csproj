@@ -45,6 +45,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Commands\GotoRepoCommand.cs" />
+    <Compile Include="Commands\RefreshRepoCommand.cs" />
     <Compile Include="Helpers\CredentialManager.cs" />
     <Compile Include="Helpers\RepoInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -54,6 +56,7 @@
     <Compile Include="ToolWindows\GHActionsToolWindow.xaml.cs">
       <DependentUpon>GHActionsToolWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ToolWindows\ToolWindowMessenger.cs" />
     <Compile Include="VSCommandTable.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

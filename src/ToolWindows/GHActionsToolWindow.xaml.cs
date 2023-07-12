@@ -1,4 +1,5 @@
 ﻿using GitHubActionsVS.Helpers;
+using GitHubActionsVS.ToolWindows;
 using Octokit;
 using System.Diagnostics;
 using System.IO;
@@ -14,20 +15,50 @@ namespace GitHubActionsVS;
 public partial class GHActionsToolWindow : UserControl
 {
     RepoInfo repoInfo = null;
+    public ToolWindowMessenger ToolWindowMessenger = null;
 
-    public GHActionsToolWindow()
+    public GHActionsToolWindow(ToolWindowMessenger toolWindowMessenger)
     {
+        if (toolWindowMessenger == null)
+        {
+            toolWindowMessenger = new();
+        }
+        ToolWindowMessenger = toolWindowMessenger;
+        toolWindowMessenger.MessageReceived += OnMessageReceived;
         InitializeComponent();
         repoInfo = new();
 
         _ = GetRepoInfoAsync();
     }
 
+    private void OnMessageReceived(object sender, string e)
+    {
+        ThreadHelper.JoinableTaskFactory.RunAsync(async () =>
+        {
+            switch (e)
+            {
+                case "RefreshCommand Message":
+                    await GetRepoInfoAsync();
+                    break;
+                case "GotoRepoCommand Message":
+                    await GotoRepoAsync();
+                    break;
+            }
+        }).FireAndForget();
+    }
+
+    private async Task GotoRepoAsync()
+    {
+        Process.Start(repoInfo?.RepoUrl);
+    }
+
     private async Task GetRepoInfoAsync()
     {
+        ClearTreeViews();
+
         // find the git folder
-        var project = await VS.Solutions.GetActiveProjectAsync();
-        var projectPath = project.FullPath;
+        var solution = await VS.Solutions.GetCurrentSolutionAsync();
+        var projectPath = solution?.FullPath;
 
         repoInfo.FindGitFolder(projectPath, out string gitPath);
 
@@ -51,6 +82,15 @@ public partial class GHActionsToolWindow : UserControl
                 // load the data
                 await LoadDataAsync();
             }
+        }
+
+        void ClearTreeViews()
+        {
+            // clear out the treeviews
+            tvSecrets.Items.Clear();
+            tvWorkflows.Items.Clear();
+            tvCurrentBranch.Items.Clear();
+            tvEnvironments.Items.Clear();
         }
     }
 

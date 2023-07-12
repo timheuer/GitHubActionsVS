@@ -20,6 +20,11 @@ namespace GitHubActionsVS
     /// </summary>
     internal sealed partial class PackageIds
     {
+        public const int ContextMenuGroup = 0x0001;
         public const int ActionsCommand = 0x0100;
+        public const int TWindowToolbar = 0x1000;
+        public const int TWindowToolbarGroup = 0x1050;
+        public const int RefreshRepoCommand = 0x0111;
+        public const int GotoRepoCommand = 0x0112;
     }
 }
