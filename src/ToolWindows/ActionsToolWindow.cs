@@ -12,11 +12,17 @@ public class ActionsToolWindow : BaseToolWindow<ActionsToolWindow>
 
     public override Type PaneType => typeof(Pane);
 
+    public GHActionsToolWindow ActionsWindow { get; private set; }
+    private static ActionsToolWindow _instance;
+    public static ActionsToolWindow Instance => _instance ?? (_instance = new ActionsToolWindow());
+
     public override async Task<FrameworkElement> CreateAsync(int toolWindowId, CancellationToken cancellationToken)
     {
         ToolWindowMessenger toolWindowMessenger = await Package.GetServiceAsync<ToolWindowMessenger, ToolWindowMessenger>();
 
-        return new GHActionsToolWindow(toolWindowMessenger);
+        ActionsWindow = new GHActionsToolWindow(toolWindowMessenger);
+        _instance = this;
+        return ActionsWindow;
     }
 
     [Guid("4a4ad204-3623-4e03-b2d1-6fef94652174")]

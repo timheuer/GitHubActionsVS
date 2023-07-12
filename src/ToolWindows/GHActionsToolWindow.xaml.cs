@@ -1,5 +1,6 @@
 ﻿using GitHubActionsVS.Helpers;
 using GitHubActionsVS.ToolWindows;
+using LibGit2Sharp;
 using Octokit;
 using System.Diagnostics;
 using System.IO;
@@ -52,7 +53,12 @@ public partial class GHActionsToolWindow : UserControl
         Process.Start(repoInfo?.RepoUrl);
     }
 
-    private async Task GetRepoInfoAsync()
+    public void ResetTrees()
+    {
+        ClearTreeViews();
+    }
+
+    public async Task GetRepoInfoAsync()
     {
         ClearTreeViews();
 
@@ -83,15 +89,15 @@ public partial class GHActionsToolWindow : UserControl
                 await LoadDataAsync();
             }
         }
+    }
 
-        void ClearTreeViews()
-        {
-            // clear out the treeviews
-            tvSecrets.Items.Clear();
-            tvWorkflows.Items.Clear();
-            tvCurrentBranch.Items.Clear();
-            tvEnvironments.Items.Clear();
-        }
+    private void ClearTreeViews()
+    {
+        // clear out the treeviews
+        tvSecrets.Items.Clear();
+        tvWorkflows.Items.Clear();
+        tvCurrentBranch.Items.Clear();
+        tvEnvironments.Items.Clear();
     }
 
     private async Task LoadDataAsync()
@@ -100,7 +106,7 @@ public partial class GHActionsToolWindow : UserControl
         var github = new GitHubClient(new ProductHeaderValue("VisualStudio"));
         //var token = Environment.GetEnvironmentVariable("GITHUB_PAT_VS");
         //Credentials ghCreds = new Credentials(token);
-        Credentials ghCreds = new Credentials(creds.Username, creds.Password);
+        Octokit.Credentials ghCreds = new Octokit.Credentials(creds.Username, creds.Password);
         github.Credentials = ghCreds;
 
         var style1 = this.TryFindResource("EmojiTreeViewItem") as Style;
