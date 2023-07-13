@@ -43,4 +43,14 @@ jobs:
         extension-file: '${{ github.event.repository.name }}.vsix'
         publish-manifest-file: 'vs-publish.json'
         personal-access-code: ${{ secrets.VS_PUBLISHER_ACCESS_TOKEN }}
+
+    - name: Tag and Release
+      id: tag_release
+      uses: softprops/action-gh-release@v1
+      with:
+        body: Release ${{ env.VERSION }}
+        tag_name: ${{ env.VERSION }}
+        generate_release_notes: true
+        files: |
+          **/*.vsix
     
