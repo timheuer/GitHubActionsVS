@@ -14,7 +14,7 @@ public class ActionsToolWindow : BaseToolWindow<ActionsToolWindow>
 
     public GHActionsToolWindow ActionsWindow { get; private set; }
     private static ActionsToolWindow _instance;
-    public static ActionsToolWindow Instance => _instance ?? (_instance = new ActionsToolWindow());
+    public static ActionsToolWindow Instance => _instance ??= new ActionsToolWindow();
 
     public override async Task<FrameworkElement> CreateAsync(int toolWindowId, CancellationToken cancellationToken)
     {

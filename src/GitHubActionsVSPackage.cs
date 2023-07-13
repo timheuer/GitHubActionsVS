@@ -5,11 +5,8 @@ global using Task = System.Threading.Tasks.Task;
 using GitHubActionsVS.ToolWindows;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell.Interop;
-using System.Net;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace GitHubActionsVS;
 [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]

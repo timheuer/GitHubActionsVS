@@ -12,7 +12,7 @@ internal sealed class GotoRepoCommand : BaseCommand<GotoRepoCommand>
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             ToolWindowMessenger messenger = await Package.GetServiceAsync<ToolWindowMessenger, ToolWindowMessenger>();
-            messenger.Send("GotoRepoCommand Message");
+            messenger.Send(new(MessageCommand.GotoRepo));
         }).FireAndForget();
     }
 }
