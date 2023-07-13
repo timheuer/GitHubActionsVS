@@ -17,8 +17,8 @@ namespace GitHubActionsVS;
 [ProvideService(typeof(ToolWindowMessenger), IsAsyncQueryable = true)]
 public sealed class GitHubActionsVSPackage : ToolkitPackage, IVsSolutionEvents
 {
-    private IVsSolution solution;
-    private uint cookie;
+    private IVsSolution _solution;
+    private uint _cookie;
 
     protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
     {
@@ -26,11 +26,8 @@ public sealed class GitHubActionsVSPackage : ToolkitPackage, IVsSolutionEvents
 
         await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
 
-        solution = await GetServiceAsync(typeof(SVsSolution)) as IVsSolution;
-        if (solution is not null)
-        {
-            solution.AdviseSolutionEvents(this, out cookie);
-        }
+        _solution = await GetServiceAsync(typeof(SVsSolution)) as IVsSolution;
+        _solution?.AdviseSolutionEvents(this, out _cookie);
 
         await this.RegisterCommandsAsync();
 
@@ -40,10 +37,10 @@ public sealed class GitHubActionsVSPackage : ToolkitPackage, IVsSolutionEvents
     protected override void Dispose(bool disposing)
     {
         ThreadHelper.ThrowIfNotOnUIThread();
-        if (solution is not null)
+        if (_solution is not null)
         {
-            solution.UnadviseSolutionEvents(cookie);
-            solution = null;
+            _solution.UnadviseSolutionEvents(_cookie);
+            _solution = null;
         }
         base.Dispose(disposing);
     }
