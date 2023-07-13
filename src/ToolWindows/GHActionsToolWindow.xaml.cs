@@ -104,17 +104,8 @@ public partial class GHActionsToolWindow : UserControl
     {
         var creds = CredentialManager.GetCredentials("git:https://github.com");
         var github = new GitHubClient(new ProductHeaderValue("VisualStudio"));
-        //var token = Environment.GetEnvironmentVariable("GITHUB_PAT_VS");
-        //Credentials ghCreds = new Credentials(token);
         Octokit.Credentials ghCreds = new Octokit.Credentials(creds.Username, creds.Password);
         github.Credentials = ghCreds;
-
-        var style1 = this.TryFindResource("EmojiTreeViewItem") as Style;
-
-        if (style1 is null)
-        {
-            Debug.WriteLine("did not find style");
-        }
 
         try
         {
@@ -143,8 +134,7 @@ public partial class GHActionsToolWindow : UserControl
             foreach (var run in runs.WorkflowRuns)
             {
                 var item = new TreeViewItem();
-                item.Style = style1;
-                item.Header = $"{GetConclusionIndicator(run.Conclusion.Value.StringValue.ToString())} {run.Name} #{run.RunNumber}";
+                item.Header = CreateEmojiContent($"{GetConclusionIndicator(run.Conclusion.Value.StringValue.ToString())} {run.Name} #{run.RunNumber}");
                 item.Tag = run;
 
                 // iterate through the run
@@ -152,16 +142,14 @@ public partial class GHActionsToolWindow : UserControl
                 foreach (var job in jobs.Jobs)
                 {
                     var jobItem = new TreeViewItem();
-                    jobItem.Style = style1;
-                    jobItem.Header = $"{GetConclusionIndicator(job.Conclusion.Value.StringValue.ToString())} {job.Name}";
+                    jobItem.Header = CreateEmojiContent($"{GetConclusionIndicator(job.Conclusion.Value.StringValue.ToString())} {job.Name}");
                     jobItem.Tag = job;
 
                     // iterate through the job          
                     foreach (var step in job.Steps)
                     {
                         var stepItem = new TreeViewItem();
-                        stepItem.Style = style1;
-                        stepItem.Header = $"{GetConclusionIndicator(step.Conclusion.Value.StringValue.ToString())}: {step.Name}";
+                        stepItem.Header = CreateEmojiContent($"{GetConclusionIndicator(step.Conclusion.Value.StringValue.ToString())}: {step.Name}");
                         stepItem.Tag = step;
                         jobItem.Items.Add(stepItem);
                     }
@@ -175,6 +163,14 @@ public partial class GHActionsToolWindow : UserControl
         {
             Console.WriteLine(ex);
         }
+    }
+
+    private UIElement CreateEmojiContent(string emojiString)
+    {
+        var emojiBlock = new Emoji.Wpf.TextBlock();
+        emojiBlock.Text = emojiString;
+
+        return emojiBlock;
     }
 
     private string GetConclusionIndicator(string status)
