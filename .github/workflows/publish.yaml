@@ -18,8 +18,13 @@ jobs:
     needs: build
     name: Publish
     runs-on: windows-2022
+    env:
+        VERSION: ${{ needs.build.outputs.version }}
 
     steps:
+    - name: Version from build
+      run: echo ${{ env.VERSION }}
+
     - name: Download Package artifact
       uses: actions/download-artifact@v3
       with:
@@ -35,7 +40,7 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         body: Release ${{ needs.build.outputs.version }}
-        tag_name: ${{ needs.build.outputs.version }}
+        tag_name: ${{ env.VERSION }}
         generate_release_notes: true
         files: |
           **/*.vsix
