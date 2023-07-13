@@ -15,7 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workflows", "Workflows", "{8C868368-D330-4780-A683-AF741C00B754}"
 	ProjectSection(SolutionItems) = preProject
-		..\.github\workflows\pr.yaml.yaml = ..\.github\workflows\pr.yaml.yaml
+		..\.github\workflows\pr.yaml = ..\.github\workflows\pr.yaml
 		..\.github\workflows\publish.yaml = ..\.github\workflows\publish.yaml
 		..\.github\workflows\_build.yaml = ..\.github\workflows\_build.yaml
 	EndProjectSection

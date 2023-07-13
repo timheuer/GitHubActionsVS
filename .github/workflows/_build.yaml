@@ -16,7 +16,7 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Nerdbank.GitVersioning
+    - name: Version stamping
       id: vsix_version
       uses: dotnet/nbgv@e6830c173ef6061fe122d7205ac31bb2f8cca842
       with:
@@ -37,3 +37,7 @@ jobs:
       with:
         name: ${{ github.event.repository.name }}.vsix
         path: /_built/**/*.vsix
+
+    - name: Echo version
+      run: |
+          Write-Output ${{ steps.vsix_version.outputs.SimpleVersion }}
