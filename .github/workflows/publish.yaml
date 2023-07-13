@@ -17,7 +17,7 @@ jobs:
   publish:
     needs: build
     name: Publish
-    runs-on: windows-2019
+    runs-on: windows-2022
     env:
         VERSION: ${{ needs.build.outputs.version }}
 
@@ -34,7 +34,7 @@ jobs:
 
     - name: Publish extension to Marketplace
       #if: ${{ contains(github.event.head_commit.message, '[release]') }}
-      uses: cezarypiatek/VsixPublisherAction@0.1
+      uses: cezarypiatek/VsixPublisherAction@1.0
       with:
         extension-file: '${{ github.event.repository.name }}.vsix'
         publish-manifest-file: 'vs-publish.json'
