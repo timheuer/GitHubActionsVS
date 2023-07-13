@@ -12,14 +12,12 @@ namespace GitHubActionsVS;
 /// </summary>
 public partial class GHActionsToolWindow : UserControl
 {
-    readonly RepoInfo _repoInfo = null;
-
-    public ToolWindowMessenger ToolWindowMessenger = null;
+    private readonly RepoInfo _repoInfo = null;
+    private readonly ToolWindowMessenger _toolWindowMessenger = null;
 
     public GHActionsToolWindow(ToolWindowMessenger toolWindowMessenger)
     {
-        toolWindowMessenger ??= new();
-        ToolWindowMessenger = toolWindowMessenger;
+        _toolWindowMessenger = toolWindowMessenger ??= new();
         toolWindowMessenger.MessageReceived += OnMessageReceived;
         InitializeComponent();
         _repoInfo = new();
@@ -52,10 +50,7 @@ public partial class GHActionsToolWindow : UserControl
         return Task.CompletedTask;
     }
 
-    public void ResetTrees()
-    {
-        ClearTreeViews();
-    }
+    public void ResetTrees() => ClearTreeViews();
 
     public async Task GetRepoInfoAsync()
     {
@@ -77,7 +72,6 @@ public partial class GHActionsToolWindow : UserControl
             if (_repoInfo.IsGitHub)
             {
                 Debug.WriteLine($"GitHub repo: {_repoInfo.RepoOwner}/{_repoInfo.RepoName}");
-                // load the data
                 await LoadDataAsync();
             }
             else
@@ -89,7 +83,6 @@ public partial class GHActionsToolWindow : UserControl
 
     private void ClearTreeViews()
     {
-        // clear out the treeviews
         tvSecrets.Items.Clear();
         tvWorkflows.Items.Clear();
         tvCurrentBranch.Items.Clear();
@@ -98,24 +91,18 @@ public partial class GHActionsToolWindow : UserControl
 
     private async Task LoadDataAsync()
     {
-        var creds = CredentialManager.GetCredentials("git:https://github.com");
-        var github = new GitHubClient(new ProductHeaderValue("VisualStudio"));
-        //var token = Environment.GetEnvironmentVariable("GITHUB_PAT_VS");
-        //Credentials ghCreds = new Credentials(token);
-        Credentials ghCreds = new(creds.Username, creds.Password);
-        github.Credentials = ghCreds;
+        GitHubClient client = GetGitHubClient();
 
-        var style1 = TryFindResource("EmojiTreeViewItem") as Style;
-
-        if (style1 is null)
+        var emojiStyle = TryFindResource("EmojiTreeViewItem") as Style;
+        if (emojiStyle is null)
         {
-            Debug.WriteLine("did not find style");
+            Debug.WriteLine("Did not find style");
         }
 
         try
         {
             // get secrets
-            var repoSecrets = await github.Repository?.Actions?.Secrets?.GetAll(_repoInfo.RepoOwner, _repoInfo.RepoName);
+            var repoSecrets = await client.Repository?.Actions?.Secrets?.GetAll(_repoInfo.RepoOwner, _repoInfo.RepoName);
             foreach (var secret in repoSecrets.Secrets)
             {
                 var item = new TreeViewItem
@@ -127,7 +114,7 @@ public partial class GHActionsToolWindow : UserControl
             }
 
             // get workflows
-            var workflows = await github.Actions?.Workflows?.List(_repoInfo.RepoOwner, _repoInfo.RepoName);
+            var workflows = await client.Actions?.Workflows?.List(_repoInfo.RepoOwner, _repoInfo.RepoName);
             foreach (var workflow in workflows.Workflows)
             {
                 var item = new TreeViewItem
@@ -139,24 +126,24 @@ public partial class GHActionsToolWindow : UserControl
             }
 
             // get current branch
-            var runs = await github.Actions?.Workflows?.Runs?.List(_repoInfo.RepoOwner, _repoInfo.RepoName, new WorkflowRunsRequest() { Branch = _repoInfo.CurrentBranch }, new ApiOptions() { PageCount = 2, PageSize = 10 });
+            var runs = await client.Actions?.Workflows?.Runs?.List(_repoInfo.RepoOwner, _repoInfo.RepoName, new WorkflowRunsRequest() { Branch = _repoInfo.CurrentBranch }, new ApiOptions() { PageCount = 2, PageSize = 10 });
             foreach (var run in runs.WorkflowRuns)
             {
                 var item = new TreeViewItem
                 {
-                    Style = style1,
-                    Header = $"{GetConclusionIndicator(run.Conclusion.Value.StringValue.ToString())} {run.Name} #{run.RunNumber}",
+                    Style = emojiStyle,
+                    Header = $"{GetConclusionIndicator(run.Conclusion.Value.StringValue)} {run.Name} #{run.RunNumber}",
                     Tag = run
                 };
 
                 // iterate through the run
-                var jobs = await github.Actions?.Workflows?.Jobs?.List(_repoInfo.RepoOwner, _repoInfo.RepoName, run.Id);
+                var jobs = await client.Actions?.Workflows?.Jobs?.List(_repoInfo.RepoOwner, _repoInfo.RepoName, run.Id);
                 foreach (var job in jobs.Jobs)
                 {
                     var jobItem = new TreeViewItem
                     {
-                        Style = style1,
-                        Header = $"{GetConclusionIndicator(job.Conclusion.Value.StringValue.ToString())} {job.Name}",
+                        Style = emojiStyle,
+                        Header = $"{GetConclusionIndicator(job.Conclusion.Value.StringValue)} {job.Name}",
                         Tag = job
                     };
 
@@ -165,8 +152,8 @@ public partial class GHActionsToolWindow : UserControl
                     {
                         var stepItem = new TreeViewItem
                         {
-                            Style = style1,
-                            Header = $"{GetConclusionIndicator(step.Conclusion.Value.StringValue.ToString())}: {step.Name}",
+                            Style = emojiStyle,
+                            Header = $"{GetConclusionIndicator(step.Conclusion.Value.StringValue)}: {step.Name}",
                             Tag = step
                         };
                         jobItem.Items.Add(stepItem);
@@ -181,6 +168,17 @@ public partial class GHActionsToolWindow : UserControl
         {
             Console.WriteLine(ex);
         }
+    }
+
+    private static GitHubClient GetGitHubClient()
+    {
+        var creds = CredentialManager.GetCredentials("git:https://github.com");
+        var client = new GitHubClient(new ProductHeaderValue("VisualStudio"))
+        {
+            Credentials = new(creds.Username, creds.Password)
+        };
+
+        return client;
     }
 
     private string GetConclusionIndicator(string status) => status.ToLowerInvariant() switch
