@@ -22,10 +22,6 @@ jobs:
         VERSION: ${{ needs.build.outputs.version }}
 
     steps:
-    - name: Version from build
-      run: |
-          Write-Output ${{ env.VERSION }}
-
     - name: Download Package artifact
       uses: actions/download-artifact@v3
       with:
