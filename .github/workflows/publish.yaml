@@ -23,7 +23,8 @@ jobs:
 
     steps:
     - name: Version from build
-      run: echo ${{ env.VERSION }}
+      run: |
+          Write-Output ${{ env.VERSION }}
 
     - name: Download Package artifact
       uses: actions/download-artifact@v3
