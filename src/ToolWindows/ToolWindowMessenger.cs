@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GitHubActionsVS.ToolWindows;
+﻿namespace GitHubActionsVS.ToolWindows;
 public class ToolWindowMessenger
 {
-    public void Send(string message)
+    public void Send(MessagePayload payload)
     {
-        MessageReceived?.Invoke(this, message);
+        MessageReceived?.Invoke(this, payload);
     }
-    public event EventHandler<string> MessageReceived;
+
+    public event EventHandler<MessagePayload> MessageReceived;
 }

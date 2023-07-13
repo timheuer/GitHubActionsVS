@@ -56,6 +56,8 @@
     <Compile Include="ToolWindows\GHActionsToolWindow.xaml.cs">
       <DependentUpon>GHActionsToolWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ToolWindows\MessagePayload.cs" />
+    <Compile Include="ToolWindows\MessageCommand.cs" />
     <Compile Include="ToolWindows\ToolWindowMessenger.cs" />
     <Compile Include="VSCommandTable.cs">
       <AutoGen>True</AutoGen>
