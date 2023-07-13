@@ -47,13 +47,20 @@ public sealed class GitHubActionsVSPackage : ToolkitPackage, IVsSolutionEvents
 
     public int OnAfterOpenSolution(object pUnkReserved, int fNewSolution)
     {
-        //_ = ActionsToolWindow.Instance?.ActionsWindow?.GetRepoInfoAsync();
+        if (ActionsToolWindow.Instance is { ActionsWindow: { } } window)
+        {
+            _ = window.ActionsWindow.GetRepoInfoAsync();
+        }
+
         return VSConstants.S_OK;
     }
 
     public int OnBeforeCloseSolution(object pUnkReserved)
     {
-        ActionsToolWindow.Instance.ActionsWindow.ResetTrees();
+        if (ActionsToolWindow.Instance is { ActionsWindow: { } } window)
+        {
+            window.ActionsWindow.ResetTrees();
+        }
 
         return VSConstants.S_OK;
     }
