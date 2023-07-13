@@ -12,7 +12,7 @@ internal sealed class RefreshRepoCommand : BaseCommand<RefreshRepoCommand>
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             ToolWindowMessenger messenger = await Package.GetServiceAsync<ToolWindowMessenger, ToolWindowMessenger>();
-            messenger.Send(new(MessageCommand.GotoRepo));
+            messenger.Send(new(MessageCommand.Refresh));
         }).FireAndForget();
     }
 }
