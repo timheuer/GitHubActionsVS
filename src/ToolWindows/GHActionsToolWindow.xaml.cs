@@ -98,7 +98,7 @@ public partial class GHActionsToolWindow : UserControl
         {
             Debug.WriteLine("Did not find style");
         }
-
+        
         try
         {
             // get secrets
@@ -108,7 +108,7 @@ public partial class GHActionsToolWindow : UserControl
                 var updatedOrCreatedAt = secret.UpdatedAt.GetValueOrDefault(secret.CreatedAt);
                 var item = new TreeViewItem
                 {
-                    Header = $"{secret.Name} ({updatedOrCreatedAt:g})",
+                    Header = CreateEmojiContent($"{secret.Name} ({updatedOrCreatedAt:g})"),
                     Tag = secret,
                 };
 
@@ -134,7 +134,7 @@ public partial class GHActionsToolWindow : UserControl
                 var item = new TreeViewItem
                 {
                     Style = emojiStyle,
-                    Header = $"{GetConclusionIndicator(run.Conclusion.Value.StringValue)} {run.Name} #{run.RunNumber}",
+                    Header = CreateEmojiContent($"{GetConclusionIndicator(run.Conclusion.Value.StringValue)} {run.Name} #{run.RunNumber}"),
                     Tag = run
                 };
 
@@ -145,7 +145,7 @@ public partial class GHActionsToolWindow : UserControl
                     var jobItem = new TreeViewItem
                     {
                         Style = emojiStyle,
-                        Header = $"{GetConclusionIndicator(job.Conclusion.Value.StringValue)} {job.Name}",
+                        Header = CreateEmojiContent($"{GetConclusionIndicator(job.Conclusion.Value.StringValue)} {job.Name}"),
                         Tag = job
                     };
 
@@ -155,9 +155,10 @@ public partial class GHActionsToolWindow : UserControl
                         var stepItem = new TreeViewItem
                         {
                             Style = emojiStyle,
-                            Header = $"{GetConclusionIndicator(step.Conclusion.Value.StringValue)}: {step.Name}",
+                            Header = CreateEmojiContent($"{GetConclusionIndicator(step.Conclusion.Value.StringValue)}: {step.Name}"),
                             Tag = step
                         };
+                        
                         jobItem.Items.Add(stepItem);
                     }
 
@@ -181,6 +182,14 @@ public partial class GHActionsToolWindow : UserControl
         };
 
         return client;
+    }
+
+    private UIElement CreateEmojiContent(string emojiString)
+    {
+        var emojiBlock = new Emoji.Wpf.TextBlock();
+        emojiBlock.Text = emojiString;
+
+        return emojiBlock;
     }
 
     private string GetConclusionIndicator(string status) => status.ToLowerInvariant() switch
