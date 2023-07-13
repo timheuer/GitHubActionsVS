@@ -5,7 +5,7 @@ on: workflow_call
 jobs:
   build:
     outputs:
-      version: ${{ steps.vsix_version.outputs.version-number }}
+      version: ${{ steps.vsix_version.outputs.SimpleVersion }}
     name: Build 
     runs-on: windows-2022
     env:
@@ -17,6 +17,7 @@ jobs:
         fetch-depth: 0
 
     - name: Nerdbank.GitVersioning
+      id: vsix_version
       uses: dotnet/nbgv@e6830c173ef6061fe122d7205ac31bb2f8cca842
       with:
         setAllVars: true

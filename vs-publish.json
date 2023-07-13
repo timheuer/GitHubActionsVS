@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json.schemastore.org/vsix-publish",
+  "categories": [ "build", "source control" ],
+  "identity": {
+    "internalName": "GitHubActionsVS",
+    "tags": [ "github", "actions", "devops", "workflow" ]
+  },
+  "overview": "README.md",
+  "publisher": "TimHeuer",
+  "repo": "https://github.com/timheuer/GitHubActionsVS",
+  "qna": false
+}
