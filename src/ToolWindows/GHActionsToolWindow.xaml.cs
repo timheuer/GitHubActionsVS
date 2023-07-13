@@ -105,11 +105,13 @@ public partial class GHActionsToolWindow : UserControl
             var repoSecrets = await client.Repository?.Actions?.Secrets?.GetAll(_repoInfo.RepoOwner, _repoInfo.RepoName);
             foreach (var secret in repoSecrets.Secrets)
             {
+                var updatedOrCreatedAt = secret.UpdatedAt.GetValueOrDefault(secret.CreatedAt);
                 var item = new TreeViewItem
                 {
-                    Header = secret.Name,
-                    Tag = secret
+                    Header = $"{secret.Name} ({updatedOrCreatedAt:g})",
+                    Tag = secret,
                 };
+
                 tvSecrets.Items.Add(item);
             }
 
