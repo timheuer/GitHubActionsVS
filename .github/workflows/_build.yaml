@@ -5,7 +5,7 @@ on:
     outputs:
         version: 
           description: 'Version of the build'
-          value: ${{ jobs.build.outputs.version) }}
+          value: ${{ jobs.build.outputs.version }}
 
 jobs:
   build:
