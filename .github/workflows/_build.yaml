@@ -45,7 +45,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: msbuild.binlog
-        path: src/msbuild.binlog
+        path: msbuild.binlog
 
     - name: ⬆️ Upload artifact
       uses: actions/upload-artifact@v3
