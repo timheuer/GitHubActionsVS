@@ -18,6 +18,9 @@ jobs:
     needs: build
     name: Publish
     runs-on: windows-2022
+    permissions:
+      contents: write
+
     env:
         VERSION: ${{ needs.build.outputs.version }}
 
