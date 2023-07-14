@@ -35,7 +35,13 @@ jobs:
         msbuild: 'true'
 
     - name: 🏗️ Build
-      run: msbuild ${{ env.PROJECT_PATH }} /p:Configuration=Release /v:m -restore /p:OutDir=\_built
+      run: msbuild ${{ env.PROJECT_PATH }} /p:Configuration=Release /v:m -restore /p:OutDir=\_built -bl
+
+    - name: ⬆️ Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: msbuild.binlog
+        path: src/msbuild.binlog
 
     - name: ⬆️ Upload artifact
       uses: actions/upload-artifact@v3
