@@ -18,9 +18,18 @@ public class ConclusionIconConverter : IValueConverter
     private string GetConclusionIndicator(string status) => status.ToLowerInvariant() switch
     {
         "success" => "\uEBB3 ",
-        "failure" => "\uEBB4 ",
+        "completed" => "\uEBB3 ",
+        "failure" => "\uEA87 ",
+        "startup_failure" => "\uEA87 ",
         "cancelled" => "\uEABD ",
         "skipped" => "\uEABD ",
-        _ => "🤷🏽",
+        "pending" => "\uEBB5 ",
+        "queued" => "\uEBA7 ",
+        "requested" => "\uEBA7 ",
+        "waiting" => "\uEA82 ",
+        "inprogress" => "\uEA82 ",
+        "in_progress" => "\uEA82 ",
+        "warning" => "\uEA6C ",
+        _ => "\uEA74 ",
     };
 }

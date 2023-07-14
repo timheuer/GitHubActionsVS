@@ -21,6 +21,8 @@ public class ConclusionColorConverter : IValueConverter
     {
         "success" => new SolidColorBrush(Colors.Green),
         "failure" => new SolidColorBrush(Colors.Red),
+        "startup_failure" => new SolidColorBrush(Colors.Red),
+        "warning" => new SolidColorBrush(Colors.Yellow),
         _ => new SolidColorBrush(Colors.Black),
     };
 }
