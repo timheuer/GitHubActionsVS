@@ -47,7 +47,7 @@ public partial class GHActionsToolWindow : UserControl
     {
         if (_repoInfo is { RepoUrl.Length: > 0 })
         {
-            Process.Start(_repoInfo?.RepoUrl);
+            Process.Start($"{_repoInfo?.RepoUrl}/actions");
         }
 
         return Task.CompletedTask;
