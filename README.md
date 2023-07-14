@@ -1,6 +1,6 @@
 [![Build](https://github.com/timheuer/GitHubActionsVS/actions/workflows/_build.yaml/badge.svg)](https://github.com/timheuer/GitHubActionsVS/actions/workflows/_build.yaml)
 [![GitHub last commit](https://img.shields.io/github/last-commit/timheuer/GitHubActionsVS)](https://github.com/timheuer/GitHubActionsVS/)
-[![VS Marketplace Badge](https://img.shields.io/visual-studio-marketplace/v/timheuer.GitHubActionsVS?label=VS%20Marketplace&color=purple&logo=visualstudio)](https://marketplace.visualstudio.com/items?itemName=TimHeuer.GitHubActionVS)
+[![VS Marketplace Badge](https://img.shields.io/visual-studio-marketplace/v/timheuer.GitHubActionsVS?label=VS%20Marketplace&color=purple&logo=visualstudio)](https://marketplace.visualstudio.com/items?itemName=TimHeuer.GitHubActionsVS)
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?)](#contributors-)
