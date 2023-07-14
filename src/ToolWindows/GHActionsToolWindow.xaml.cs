@@ -1,9 +1,12 @@
 ﻿using GitHubActionsVS.Helpers;
+using GitHubActionsVS.Models;
 using GitHubActionsVS.ToolWindows;
 using Octokit;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace GitHubActionsVS;
 
@@ -85,12 +88,20 @@ public partial class GHActionsToolWindow : UserControl
     {
         tvSecrets.Items.Clear();
         //tvWorkflows.Items.Clear();
-        tvCurrentBranch.Items.Clear();
+        tvCurrentBranch.ItemsSource = null;
         tvEnvironments.Items.Clear();
     }
 
     private async Task LoadDataAsync()
     {
+
+        // get the settings
+        var generalSettings = await ExtensionOptions.GetLiveInstanceAsync();
+        var maxRuns = generalSettings.MaxRuns;
+
+        refreshProgress.IsIndeterminate = true;
+        refreshProgress.Visibility = Visibility.Visible;
+
         GitHubClient client = GetGitHubClient();
 
         try
@@ -122,46 +133,65 @@ public partial class GHActionsToolWindow : UserControl
             //}
 
             // get current branch
-            var runs = await client.Actions?.Workflows?.Runs?.List(_repoInfo.RepoOwner, _repoInfo.RepoName, new WorkflowRunsRequest() { Branch = _repoInfo.CurrentBranch }, new ApiOptions() { PageCount = 2, PageSize = 10 });
+            var runs = await client.Actions?.Workflows?.Runs?.List(_repoInfo.RepoOwner, _repoInfo.RepoName, new WorkflowRunsRequest() { Branch = _repoInfo.CurrentBranch }, new ApiOptions() { PageCount = 1, PageSize = maxRuns });
+            
+            // creating simplified model of the GH info for the treeview
+            List<SimpleRun> runsList = new List<SimpleRun>();
+
+            // iterate throught the runs
             foreach (var run in runs.WorkflowRuns)
             {
-                var item = new TreeViewItem
+                SimpleRun simpleRun = new()
                 {
-                    Header = CreateEmojiContent($"{GetConclusionIndicator(run.Conclusion.Value.StringValue)} {run.Name} #{run.RunNumber}"),
-                    Tag = run
+                    Conclusion = run.Conclusion.Value.StringValue,
+                    Name = run.Name,
+                    LogDate = run.UpdatedAt,
+                    Id = run.Id.ToString(),
+                    RunNumber = run.RunNumber.ToString()
                 };
 
-                // iterate through the run
-                var jobs = await client.Actions?.Workflows?.Jobs?.List(_repoInfo.RepoOwner, _repoInfo.RepoName, run.Id);
+                // get the jobs for the run
+                var jobs = await client.Actions.Workflows.Jobs?.List(_repoInfo.RepoOwner, _repoInfo.RepoName, run.Id);
+
+                List<SimpleJob> simpleJobs = new();
+
+                // iterate through the jobs' steps
                 foreach (var job in jobs.Jobs)
                 {
-                    var jobItem = new TreeViewItem
-                    {
-                        Header = CreateEmojiContent($"{GetConclusionIndicator(job.Conclusion.Value.StringValue)} {job.Name}"),
-                        Tag = job
-                    };
-
-                    // iterate through the job          
+                    List<SimpleJob> steps = new();
                     foreach (var step in job.Steps)
                     {
-                        var stepItem = new TreeViewItem
+                        steps.Add(new SimpleJob()
                         {
-                            Header = CreateEmojiContent($"{GetConclusionIndicator(step.Conclusion.Value.StringValue)}: {step.Name}"),
-                            Tag = $"{job.HtmlUrl}#step:{step.Number.ToString()}:1" //https://github.com/timheuer/workflow-playground/actions/runs/5548963145/jobs/10132505381#step:2:7
-                        };
-                        stepItem.MouseDoubleClick += JobItem_MouseDoubleClick;
-                        jobItem.Items.Add(stepItem);
+                            Conclusion = step.Conclusion.Value.StringValue,
+                            Name = step.Name,
+                            Url = $"{job.HtmlUrl}#step:{step.Number.ToString()}:1"
+                        });
                     }
-
-                    item.Items.Add(jobItem);
+                    simpleJobs.Add(new SimpleJob()
+                    {
+                        Conclusion = job.Conclusion.Value.StringValue,
+                        Name = job.Name,
+                        Id = job.Id.ToString(),
+                        Jobs = steps // add the steps to the job
+                    });
                 }
-                tvCurrentBranch.Items.Add(item);
+
+                // add the jobs to the run
+                simpleRun.Jobs = simpleJobs;
+
+                runsList.Add(simpleRun);
             }
+
+            tvCurrentBranch.ItemsSource = runsList;
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex);
         }
+
+        refreshProgress.Visibility = Visibility.Collapsed;
+        refreshProgress.IsIndeterminate = false;
     }
 
     private UIElement CreateEmojiContent(string emojiString)
@@ -183,21 +213,25 @@ public partial class GHActionsToolWindow : UserControl
         return client;
     }
 
-    private string GetConclusionIndicator(string status) => status.ToLowerInvariant() switch
-    {
-        "success" => "✅",
-        "failure" => "❌",
-        "cancelled" => "🚫",
-        "skipped" => "⏭",
-        _ => "🤷🏽",
-    };
-
     private void JobItem_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
     {
         // get the items Tag
-        if (sender is TreeViewItem item && item.Tag is string url)
+        if (sender is TreeViewItem item && item.Header is SimpleJob job && job.Url is not null)
         {
-            Process.Start(url);
+            Process.Start(job.Url);
+        }
+    }
+
+    private void HandlePreviewMouseWheel(object sender, MouseWheelEventArgs e)
+    {
+        if (!e.Handled)
+        {
+            e.Handled = true;
+            var eventArg = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta);
+            eventArg.RoutedEvent = UIElement.MouseWheelEvent;
+            eventArg.Source = sender;
+            var parent = ((Control)sender).Parent as UIElement;
+            parent.RaiseEvent(eventArg);
         }
     }
 }

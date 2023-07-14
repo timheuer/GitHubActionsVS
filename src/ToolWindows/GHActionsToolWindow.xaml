@@ -9,6 +9,7 @@
              xmlns:catalog="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.ImageCatalog"
              xmlns:toolkit="clr-namespace:Community.VisualStudio.Toolkit;assembly=Community.VisualStudio.Toolkit"
              xmlns:emoji="clr-namespace:Emoji.Wpf;assembly=Emoji.Wpf"
+             xmlns:ivc="clr-namespace:GitHubActionsVS.Converters"
              toolkit:Themes.UseVsTheme="True"
              mc:Ignorable="d"
              d:DesignHeight="300"
@@ -16,6 +17,8 @@
              Name="GHActionToolWindow">
     <UserControl.Resources>
         <FontFamily x:Key="CodiconFont">pack://application:,,,/GitHubActionsVS;component/Resources/#codicon</FontFamily>
+        <ivc:ConclusionIconConverter x:Key="ConclusionIconConverter" />
+        <ivc:ConclusionColorConverter x:Key="ConclusionColorConverter" />
         <Style TargetType="{x:Type Expander}">
             <Setter Property="toolkit:Themes.UseVsTheme" Value="True" />
         </Style>
@@ -40,12 +43,31 @@
                 <TextBlock Text="{Binding}" Margin="5,0" />
             </StackPanel>
         </DataTemplate>
+        <HierarchicalDataTemplate x:Key="TreeViewRunNodeDataTemplate" ItemsSource="{Binding Jobs}">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Grid.Column="0">
+                <TextBlock VerticalAlignment="Center" FontFamily="{StaticResource CodiconFont}" 
+                   Foreground="{Binding Path=Conclusion, Converter={StaticResource ConclusionColorConverter}}"
+                   Text="{Binding Path=Conclusion, Converter={StaticResource ConclusionIconConverter}}"/>
+                <emoji:TextBlock Text="{Binding DisplayName}" VerticalAlignment="Bottom" />
+            </StackPanel>
+        </HierarchicalDataTemplate>
     </UserControl.Resources>
-    <Grid Margin="5,5,0,0">
-        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <ProgressBar x:Name="refreshProgress" Height="5" Grid.Row="0" Visibility="Collapsed" />
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Grid.Row="1" Margin="5,5,0,0">
             <StackPanel Orientation="Vertical">
                 <Expander Header="Current Branch">
-                    <TreeView x:Name="tvCurrentBranch" BorderThickness="0" />
+                    <TreeView BorderThickness="0" PreviewMouseWheel="HandlePreviewMouseWheel" MouseDoubleClick="JobItem_MouseDoubleClick" x:Name="tvCurrentBranch" ItemTemplate="{DynamicResource TreeViewRunNodeDataTemplate}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                        <TreeView.Resources>
+                            <Style TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource {x:Type TreeViewItem}}">
+                                <EventSetter Event="MouseDoubleClick" Handler="JobItem_MouseDoubleClick"/>
+                            </Style>
+                        </TreeView.Resources>
+                    </TreeView>
                 </Expander>
                 <!--<Expander Header="Workflows">
                     <TreeView x:Name="tvWorkflows" BorderThickness="0"/>

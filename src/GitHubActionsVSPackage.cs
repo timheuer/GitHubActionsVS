@@ -11,6 +11,7 @@ using System.Threading;
 namespace GitHubActionsVS;
 [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
 [ProvideToolWindow(typeof(ActionsToolWindow.Pane), Style = VsDockStyle.Tabbed, Window = WindowGuids.SolutionExplorer)]
+[ProvideOptionPage(typeof(OptionsProvider.ExtensionOptionsOptions), "GitHub Actions for VS", "General", 0, 0, true, SupportsProfiles = true)]
 [ProvideMenuResource("Menus.ctmenu", 1)]
 [Guid(PackageGuids.GitHubActionsVSString)]
 [ProvideBindingPath]

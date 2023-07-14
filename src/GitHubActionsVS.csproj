@@ -47,8 +47,14 @@
   <ItemGroup>
     <Compile Include="Commands\GotoRepoCommand.cs" />
     <Compile Include="Commands\RefreshRepoCommand.cs" />
+    <Compile Include="Converters\ConclusionColorConverter.cs" />
+    <Compile Include="Converters\ConclusionIconConverter.cs" />
     <Compile Include="Helpers\CredentialManager.cs" />
     <Compile Include="Helpers\RepoInfo.cs" />
+    <Compile Include="Models\BaseWorkflowType.cs" />
+    <Compile Include="Models\SimpleJob.cs" />
+    <Compile Include="Models\SimpleRun.cs" />
+    <Compile Include="Options\ExtensionOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Commands\ActionsToolWindowCommand.cs" />
     <Compile Include="GitHubActionsVSPackage.cs" />
