@@ -47,9 +47,9 @@
                 <Expander Header="Current Branch">
                     <TreeView x:Name="tvCurrentBranch" BorderThickness="0" />
                 </Expander>
-                <Expander Header="Workflows">
+                <!--<Expander Header="Workflows">
                     <TreeView x:Name="tvWorkflows" BorderThickness="0"/>
-                </Expander>
+                </Expander>-->
                 <Expander Header="Settings">
                     <TreeView BorderThickness="0">
                         <TreeViewItem Header="Environments" HeaderTemplate="{DynamicResource EnvironmentHeaderTemplate}" x:Name="tvEnvironments" />

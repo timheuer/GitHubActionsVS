@@ -84,7 +84,7 @@ public partial class GHActionsToolWindow : UserControl
     private void ClearTreeViews()
     {
         tvSecrets.Items.Clear();
-        tvWorkflows.Items.Clear();
+        //tvWorkflows.Items.Clear();
         tvCurrentBranch.Items.Clear();
         tvEnvironments.Items.Clear();
     }
@@ -110,16 +110,16 @@ public partial class GHActionsToolWindow : UserControl
             }
 
             // get workflows
-            var workflows = await client.Actions?.Workflows?.List(_repoInfo.RepoOwner, _repoInfo.RepoName);
-            foreach (var workflow in workflows.Workflows)
-            {
-                var item = new TreeViewItem
-                {
-                    Header = workflow.Name,
-                    Tag = workflow
-                };
-                tvWorkflows.Items.Add(item);
-            }
+            //var workflows = await client.Actions?.Workflows?.List(_repoInfo.RepoOwner, _repoInfo.RepoName);
+            //foreach (var workflow in workflows.Workflows)
+            //{
+            //    var item = new TreeViewItem
+            //    {
+            //        Header = workflow.Name,
+            //        Tag = workflow
+            //    };
+            //    tvWorkflows.Items.Add(item);
+            //}
 
             // get current branch
             var runs = await client.Actions?.Workflows?.Runs?.List(_repoInfo.RepoOwner, _repoInfo.RepoName, new WorkflowRunsRequest() { Branch = _repoInfo.CurrentBranch }, new ApiOptions() { PageCount = 2, PageSize = 10 });
@@ -147,8 +147,9 @@ public partial class GHActionsToolWindow : UserControl
                         var stepItem = new TreeViewItem
                         {
                             Header = CreateEmojiContent($"{GetConclusionIndicator(step.Conclusion.Value.StringValue)}: {step.Name}"),
-                            Tag = step
+                            Tag = $"{job.HtmlUrl}#step:{step.Number.ToString()}:1" //https://github.com/timheuer/workflow-playground/actions/runs/5548963145/jobs/10132505381#step:2:7
                         };
+                        stepItem.MouseDoubleClick += JobItem_MouseDoubleClick;
                         jobItem.Items.Add(stepItem);
                     }
 
@@ -193,7 +194,11 @@ public partial class GHActionsToolWindow : UserControl
 
     private void JobItem_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
     {
-        throw new NotImplementedException();
+        // get the items Tag
+        if (sender is TreeViewItem item && item.Tag is string url)
+        {
+            Process.Start(url);
+        }
     }
 }
 
