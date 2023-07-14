@@ -9,9 +9,7 @@
 # GitHub Actions for Visual Studio
 The GitHub Actions extension lets you manage your workflows, view the workflow run history, and edit GitHub secrets.
 
-![image](https://github.com/timheuer/GitHubActionsVS/assets/4821/49c24fdd-6eae-46f1-beca-0f14fb2afbc1)
-
-
+![image](https://github.com/timheuer/GitHubActionsVS/assets/4821/43e011c8-2ac1-4ae9-aa95-747fe033e5c6)
 
 ## Features
 TBD
