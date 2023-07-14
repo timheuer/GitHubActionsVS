@@ -6,6 +6,10 @@ on:
         version: 
           description: 'Version of the build'
           value: ${{ jobs.build.outputs.version }}
+  workflow_dispatch:
+      inputs:
+        Reason:
+            description: 'Reason for the build'
 
 jobs:
   build:
