@@ -19,17 +19,17 @@ public class ConclusionIconConverter : IValueConverter
     {
         "success" => "\uEBB3 ",
         "completed" => "\uEBB3 ",
-        "failure" => "\uEA87 ",
-        "startup_failure" => "\uEA87 ",
-        "cancelled" => "\uEABD ",
+        "failure" => "\uEC13 ",
+        "startup_failure" => "\uEC13 ",
+        "cancelled" => "\uEC19 ",
         "skipped" => "\uEABD ",
-        "pending" => "\uEBB5 ",
+        "pending" => "\uEB81 ",
         "queued" => "\uEBA7 ",
         "requested" => "\uEBA7 ",
         "waiting" => "\uEA82 ",
         "inprogress" => "\uEA82 ",
         "in_progress" => "\uEA82 ",
-        "warning" => "\uEA6C ",
+        "warning" => "\uEB82 ",
         _ => "\uEA74 ",
     };
 }

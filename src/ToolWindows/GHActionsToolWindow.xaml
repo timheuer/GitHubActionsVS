@@ -60,7 +60,7 @@
         <ProgressBar x:Name="refreshProgress" Height="5" Grid.Row="0" Visibility="Collapsed" />
         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Grid.Row="1" Margin="5,5,0,0">
             <StackPanel Orientation="Vertical">
-                <Expander Header="Current Branch">
+                <Expander Header="Current Branch" x:Name="CurrentBranchExpander">
                     <TreeView BorderThickness="0" PreviewMouseWheel="HandlePreviewMouseWheel" MouseDoubleClick="JobItem_MouseDoubleClick" x:Name="tvCurrentBranch" ItemTemplate="{DynamicResource TreeViewRunNodeDataTemplate}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
                         <TreeView.Resources>
                             <Style TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource {x:Type TreeViewItem}}">

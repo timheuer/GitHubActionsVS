@@ -89,6 +89,7 @@ public partial class GHActionsToolWindow : UserControl
         tvSecrets.Items.Clear();
         //tvWorkflows.Items.Clear();
         tvCurrentBranch.ItemsSource = null;
+        CurrentBranchExpander.IsExpanded = false;
         tvEnvironments.Items.Clear();
     }
 
@@ -190,6 +191,7 @@ public partial class GHActionsToolWindow : UserControl
             Console.WriteLine(ex);
         }
 
+        CurrentBranchExpander.IsExpanded = true;
         refreshProgress.Visibility = Visibility.Collapsed;
         refreshProgress.IsIndeterminate = false;
     }
