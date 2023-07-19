@@ -58,30 +58,30 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <ProgressBar x:Name="refreshProgress" Height="5" Grid.Row="0" Visibility="Collapsed" />
-        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Grid.Row="1" Margin="5,5,0,0">
-            <StackPanel Orientation="Vertical">
-                <Expander Header="Current Branch" x:Name="CurrentBranchExpander">
-                    <TreeView BorderThickness="0" PreviewMouseWheel="HandlePreviewMouseWheel" MouseDoubleClick="JobItem_MouseDoubleClick" x:Name="tvCurrentBranch" ItemTemplate="{DynamicResource TreeViewRunNodeDataTemplate}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
-                        <TreeView.Resources>
-                            <Style TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource {x:Type TreeViewItem}}">
-                                <EventSetter Event="MouseDoubleClick" Handler="JobItem_MouseDoubleClick"/>
-                            </Style>
-                        </TreeView.Resources>
-                    </TreeView>
-                </Expander>
-                <!--<Expander Header="Workflows">
-                    <TreeView x:Name="tvWorkflows" BorderThickness="0"/>
-                </Expander>-->
-                <Expander Header="Settings">
-                    <TreeView BorderThickness="0">
-                        <TreeViewItem Header="Environments" HeaderTemplate="{DynamicResource EnvironmentHeaderTemplate}" x:Name="tvEnvironments" />
-                        <TreeViewItem Header="Secrets" HeaderTemplate="{DynamicResource SecretsHeaderTemplate}">
-                            <TreeViewItem Header="Repository Secrets" x:Name="tvSecrets"/>
-                        </TreeViewItem>
-                        <TreeViewItem Header="Variables" HeaderTemplate="{DynamicResource VariablesHeaderTemplate}"/>
-                    </TreeView>
-                </Expander>
-            </StackPanel>
-        </ScrollViewer>
+        <StackPanel Grid.Row="1">
+            <TextBlock HorizontalAlignment="Center" x:Name="MessageArea" />
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Margin="5,5,0,0" x:Name="ActionsInfoPanel" Visibility="Collapsed">
+                <StackPanel Orientation="Vertical">
+                    <Expander Header="Current Branch" x:Name="CurrentBranchExpander">
+                        <TreeView BorderThickness="0" PreviewMouseWheel="HandlePreviewMouseWheel" MouseDoubleClick="JobItem_MouseDoubleClick" x:Name="tvCurrentBranch" ItemTemplate="{DynamicResource TreeViewRunNodeDataTemplate}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                            <TreeView.Resources>
+                                <Style TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource {x:Type TreeViewItem}}">
+                                    <EventSetter Event="MouseDoubleClick" Handler="JobItem_MouseDoubleClick"/>
+                                </Style>
+                            </TreeView.Resources>
+                        </TreeView>
+                    </Expander>
+                    <Expander Header="Settings">
+                        <TreeView BorderThickness="0">
+                            <TreeViewItem Header="Environments" HeaderTemplate="{DynamicResource EnvironmentHeaderTemplate}" x:Name="tvEnvironments" />
+                            <TreeViewItem Header="Secrets" HeaderTemplate="{DynamicResource SecretsHeaderTemplate}">
+                                <TreeViewItem Header="Repository Secrets" x:Name="tvSecrets"/>
+                            </TreeViewItem>
+                            <TreeViewItem Header="Variables" HeaderTemplate="{DynamicResource VariablesHeaderTemplate}"/>
+                        </TreeView>
+                    </Expander>
+                </StackPanel>
+            </ScrollViewer>
+        </StackPanel>
     </Grid>
 </UserControl>

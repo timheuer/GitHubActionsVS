@@ -14,25 +14,33 @@ internal class RepoInfo
     internal void FindGitFolder(string path, out string foundPath)
     {
         foundPath = null;
-
-        while (!Directory.Exists(Path.Combine(path, ".git")))
+        // Check if the current directory contains a .git folder
+        if (Directory.Exists(Path.Combine(path, ".git")))
         {
-            path = Path.GetFullPath(Path.Combine(path, ".."));
-        }
-        foundPath = path;
-        var repo = new LibGit2Sharp.Repository(foundPath);
-        var remote = repo.Network.Remotes.FirstOrDefault();
-        if (remote is not null)
-        {
-            var url = remote.Url;
-            if (url.Contains("github.com"))
+            foundPath = path;
+            var repo = new LibGit2Sharp.Repository(foundPath);
+            var remote = repo.Network.Remotes.FirstOrDefault();
+            if (remote is not null)
             {
-                IsGitHub = true;
-                var parts = url.Split('/');
-                RepoOwner = parts[parts.Length - 2];
-                RepoName = parts[parts.Length - 1].Replace(".git", "");
-                RepoUrl = url.Replace(".git", "");
-                CurrentBranch = repo.Head.FriendlyName;
+                var url = remote.Url;
+                if (url.Contains("github.com"))
+                {
+                    IsGitHub = true;
+                    var parts = url.Split('/');
+                    RepoOwner = parts[parts.Length - 2];
+                    RepoName = parts[parts.Length - 1].Replace(".git", "");
+                    RepoUrl = url.Replace(".git", "");
+                    CurrentBranch = repo.Head.FriendlyName;
+                }
+            }
+            return;
+        }
+        else
+        {
+            string parentPath = Directory.GetParent(path)?.FullName;
+            if (!string.IsNullOrEmpty(parentPath))
+            {
+                FindGitFolder(parentPath, out foundPath); // Recursively search the parent directory
             }
         }
         return;

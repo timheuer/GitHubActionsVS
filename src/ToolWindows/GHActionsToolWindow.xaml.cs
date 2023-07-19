@@ -58,6 +58,10 @@ public partial class GHActionsToolWindow : UserControl
     public async Task GetRepoInfoAsync()
     {
         ClearTreeViews();
+        _repoInfo.RepoOwner = null;
+        _repoInfo.RepoName = null;
+        _repoInfo.IsGitHub = false;
+        _repoInfo.RepoUrl = null;
 
         // find the git folder
         var solution = await VS.Solutions.GetCurrentSolutionAsync();
@@ -68,6 +72,7 @@ public partial class GHActionsToolWindow : UserControl
         if (string.IsNullOrWhiteSpace(gitPath))
         {
             Debug.WriteLine("No git repo found");
+            ShowInfoMessage("No git repo found");
         }
         else
         {
@@ -80,8 +85,20 @@ public partial class GHActionsToolWindow : UserControl
             else
             {
                 Debug.WriteLine("Not a GitHub repo");
+                ShowInfoMessage("Repo found, but not a github.com");
             }
         }
+    }
+
+    private void ShowInfoMessage(string messageString)
+    {
+        ThreadHelper.JoinableTaskFactory.Run(async () =>
+        {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            MessageArea.Text = messageString;
+            MessageArea.Visibility = Visibility.Visible;
+            ActionsInfoPanel.Visibility = Visibility.Collapsed;
+        });
     }
 
     private void ClearTreeViews()
@@ -95,6 +112,8 @@ public partial class GHActionsToolWindow : UserControl
 
     private async Task LoadDataAsync()
     {
+        MessageArea.Visibility = Visibility.Collapsed;
+        ActionsInfoPanel.Visibility = Visibility.Visible;
 
         // get the settings
         var generalSettings = await ExtensionOptions.GetLiveInstanceAsync();
