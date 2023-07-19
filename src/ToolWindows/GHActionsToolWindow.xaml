@@ -25,21 +25,9 @@
         <Style TargetType="{x:Type TreeView}">
             <Setter Property="BorderThickness" Value="0" />
         </Style>
-        <DataTemplate x:Key="EnvironmentHeaderTemplate">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock FontFamily="{StaticResource CodiconFont}" Text="&#xEBA3;" VerticalAlignment="Center" />
-                <TextBlock Text="{Binding}" Margin="5,0" />
-            </StackPanel>
-        </DataTemplate>
         <DataTemplate x:Key="SecretsHeaderTemplate">
             <StackPanel Orientation="Horizontal">
                 <TextBlock FontFamily="{StaticResource CodiconFont}" Text="&#xEA75;" VerticalAlignment="Center" />
-                <TextBlock Text="{Binding}" Margin="5,0" />
-            </StackPanel>
-        </DataTemplate>
-        <DataTemplate x:Key="VariablesHeaderTemplate">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock FontFamily="{StaticResource CodiconFont}" Text="&#xEA93;" VerticalAlignment="Center" />
                 <TextBlock Text="{Binding}" Margin="5,0" />
             </StackPanel>
         </DataTemplate>
@@ -73,11 +61,9 @@
                     </Expander>
                     <Expander Header="Settings">
                         <TreeView BorderThickness="0">
-                            <TreeViewItem Header="Environments" HeaderTemplate="{DynamicResource EnvironmentHeaderTemplate}" x:Name="tvEnvironments" />
                             <TreeViewItem Header="Secrets" HeaderTemplate="{DynamicResource SecretsHeaderTemplate}">
                                 <TreeViewItem Header="Repository Secrets" x:Name="tvSecrets"/>
                             </TreeViewItem>
-                            <TreeViewItem Header="Variables" HeaderTemplate="{DynamicResource VariablesHeaderTemplate}"/>
                         </TreeView>
                     </Expander>
                 </StackPanel>

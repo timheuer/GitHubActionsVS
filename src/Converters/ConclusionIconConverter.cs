@@ -29,7 +29,7 @@ public class ConclusionIconConverter : IValueConverter
         "waiting" => "\uEA82 ",
         "inprogress" => "\uEA82 ",
         "in_progress" => "\uEA82 ",
-        "warning" => "\uEB82 ",
+        "warning" => "\uEC1F ",
         _ => "\uEA74 ",
     };
 }

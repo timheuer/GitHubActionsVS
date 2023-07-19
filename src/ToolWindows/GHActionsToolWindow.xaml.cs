@@ -104,10 +104,8 @@ public partial class GHActionsToolWindow : UserControl
     private void ClearTreeViews()
     {
         tvSecrets.Items.Clear();
-        //tvWorkflows.Items.Clear();
         tvCurrentBranch.ItemsSource = null;
         CurrentBranchExpander.IsExpanded = false;
-        tvEnvironments.Items.Clear();
     }
 
     private async Task LoadDataAsync()
@@ -128,79 +126,94 @@ public partial class GHActionsToolWindow : UserControl
         {
             // get secrets
             var repoSecrets = await client.Repository?.Actions?.Secrets?.GetAll(_repoInfo.RepoOwner, _repoInfo.RepoName);
-            foreach (var secret in repoSecrets.Secrets)
+            if (repoSecrets.TotalCount > 0)
             {
-                var updatedOrCreatedAt = secret.UpdatedAt.GetValueOrDefault(secret.CreatedAt);
-                var item = new TreeViewItem
+                foreach (var secret in repoSecrets.Secrets)
                 {
-                    Header = $"{secret.Name} ({updatedOrCreatedAt:g})",
-                    Tag = secret,
-                };
+                    var updatedOrCreatedAt = secret.UpdatedAt.GetValueOrDefault(secret.CreatedAt);
+                    var item = new TreeViewItem
+                    {
+                        Header = $"{secret.Name} ({updatedOrCreatedAt:g})",
+                        Tag = secret,
+                    };
 
-                tvSecrets.Items.Add(item);
+                    tvSecrets.Items.Add(item);
+                }
             }
-
-            // get workflows
-            //var workflows = await client.Actions?.Workflows?.List(_repoInfo.RepoOwner, _repoInfo.RepoName);
-            //foreach (var workflow in workflows.Workflows)
-            //{
-            //    var item = new TreeViewItem
-            //    {
-            //        Header = workflow.Name,
-            //        Tag = workflow
-            //    };
-            //    tvWorkflows.Items.Add(item);
-            //}
+            else
+            {
+                var noSecretItem = new TreeViewItem
+                {
+                    Header = "No repository secrets defined"
+                };
+                tvSecrets.Items.Add(noSecretItem);
+            }
 
             // get current branch
             var runs = await client.Actions?.Workflows?.Runs?.List(_repoInfo.RepoOwner, _repoInfo.RepoName, new WorkflowRunsRequest() { Branch = _repoInfo.CurrentBranch }, new ApiOptions() { PageCount = 1, PageSize = maxRuns });
-            
-            // creating simplified model of the GH info for the treeview
+
             List<SimpleRun> runsList = new List<SimpleRun>();
 
-            // iterate throught the runs
-            foreach (var run in runs.WorkflowRuns)
+            if (runs.TotalCount > 0)
             {
-                SimpleRun simpleRun = new()
+                // creating simplified model of the GH info for the treeview
+                
+                // iterate throught the runs
+                foreach (var run in runs.WorkflowRuns)
                 {
-                    Conclusion = run.Conclusion.Value.StringValue,
-                    Name = run.Name,
-                    LogDate = run.UpdatedAt,
-                    Id = run.Id.ToString(),
-                    RunNumber = run.RunNumber.ToString()
-                };
-
-                // get the jobs for the run
-                var jobs = await client.Actions.Workflows.Jobs?.List(_repoInfo.RepoOwner, _repoInfo.RepoName, run.Id);
-
-                List<SimpleJob> simpleJobs = new();
-
-                // iterate through the jobs' steps
-                foreach (var job in jobs.Jobs)
-                {
-                    List<SimpleJob> steps = new();
-                    foreach (var step in job.Steps)
+                    SimpleRun simpleRun = new()
                     {
-                        steps.Add(new SimpleJob()
+                        Conclusion = run.Conclusion.Value.StringValue,
+                        Name = run.Name,
+                        LogDate = run.UpdatedAt,
+                        Id = run.Id.ToString(),
+                        RunNumber = run.RunNumber.ToString()
+                    };
+
+                    // get the jobs for the run
+                    var jobs = await client.Actions.Workflows.Jobs?.List(_repoInfo.RepoOwner, _repoInfo.RepoName, run.Id);
+
+                    List<SimpleJob> simpleJobs = new();
+
+                    // iterate through the jobs' steps
+                    foreach (var job in jobs.Jobs)
+                    {
+                        List<SimpleJob> steps = new();
+                        foreach (var step in job.Steps)
                         {
-                            Conclusion = step.Conclusion.Value.StringValue,
-                            Name = step.Name,
-                            Url = $"{job.HtmlUrl}#step:{step.Number.ToString()}:1"
+                            steps.Add(new SimpleJob()
+                            {
+                                Conclusion = step.Conclusion.Value.StringValue,
+                                Name = step.Name,
+                                Url = $"{job.HtmlUrl}#step:{step.Number.ToString()}:1"
+                            });
+                        }
+                        simpleJobs.Add(new SimpleJob()
+                        {
+                            Conclusion = job.Conclusion.Value.StringValue,
+                            Name = job.Name,
+                            Id = job.Id.ToString(),
+                            Jobs = steps // add the steps to the job
                         });
                     }
-                    simpleJobs.Add(new SimpleJob()
-                    {
-                        Conclusion = job.Conclusion.Value.StringValue,
-                        Name = job.Name,
-                        Id = job.Id.ToString(),
-                        Jobs = steps // add the steps to the job
-                    });
+
+                    // add the jobs to the run
+                    simpleRun.Jobs = simpleJobs;
+
+                    runsList.Add(simpleRun);
                 }
-
-                // add the jobs to the run
-                simpleRun.Jobs = simpleJobs;
-
-                runsList.Add(simpleRun);
+            }
+            else
+            {
+                // no runs found
+                var noRunsItem = new SimpleRun
+                {
+                    Name = "No workflow runs found for query",
+                    Conclusion = "warning",
+                    LogDate = DateTime.Now,
+                    RunNumber = "N/A"
+                };
+                runsList.Add(noRunsItem);
             }
 
             tvCurrentBranch.ItemsSource = runsList;
