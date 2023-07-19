@@ -32,7 +32,7 @@
             </StackPanel>
         </DataTemplate>
         <HierarchicalDataTemplate x:Key="TreeViewRunNodeDataTemplate" ItemsSource="{Binding Jobs}">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Grid.Column="0">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
                 <TextBlock VerticalAlignment="Center" FontFamily="{StaticResource CodiconFont}" 
                    Foreground="{Binding Path=Conclusion, Converter={StaticResource ConclusionColorConverter}}"
                    Text="{Binding Path=Conclusion, Converter={StaticResource ConclusionIconConverter}}"/>
@@ -40,7 +40,7 @@
             </StackPanel>
         </HierarchicalDataTemplate>
     </UserControl.Resources>
-    <Grid>
+    <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -48,16 +48,10 @@
         <ProgressBar x:Name="refreshProgress" Height="5" Grid.Row="0" Visibility="Collapsed" />
         <StackPanel Grid.Row="1">
             <TextBlock HorizontalAlignment="Center" x:Name="MessageArea" />
-            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Margin="5,5,0,0" x:Name="ActionsInfoPanel" Visibility="Collapsed">
-                <StackPanel Orientation="Vertical">
+            <ScrollViewer VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Margin="5,5,0,0" x:Name="ActionsInfoPanel" Visibility="Collapsed">
+                <StackPanel Orientation="Vertical" VerticalAlignment="Stretch">
                     <Expander Header="Current Branch" x:Name="CurrentBranchExpander">
-                        <TreeView BorderThickness="0" PreviewMouseWheel="HandlePreviewMouseWheel" MouseDoubleClick="JobItem_MouseDoubleClick" x:Name="tvCurrentBranch" ItemTemplate="{DynamicResource TreeViewRunNodeDataTemplate}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
-                            <TreeView.Resources>
-                                <Style TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource {x:Type TreeViewItem}}">
-                                    <EventSetter Event="MouseDoubleClick" Handler="JobItem_MouseDoubleClick"/>
-                                </Style>
-                            </TreeView.Resources>
-                        </TreeView>
+                        <TreeView BorderThickness="0" PreviewMouseWheel="HandlePreviewMouseWheel" x:Name="tvCurrentBranch" ItemTemplate="{DynamicResource TreeViewRunNodeDataTemplate}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"/>
                     </Expander>
                     <Expander Header="Settings">
                         <TreeView BorderThickness="0">
