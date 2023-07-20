@@ -103,7 +103,7 @@ public partial class GHActionsToolWindow : UserControl
 
     private void ClearTreeViews()
     {
-        tvSecrets.Items.Clear();
+        tvSecrets.ItemsSource = null;
         tvCurrentBranch.ItemsSource = null;
         CurrentBranchExpander.IsExpanded = false;
     }
@@ -125,29 +125,7 @@ public partial class GHActionsToolWindow : UserControl
         try
         {
             // get secrets
-            var repoSecrets = await client.Repository?.Actions?.Secrets?.GetAll(_repoInfo.RepoOwner, _repoInfo.RepoName);
-            if (repoSecrets.TotalCount > 0)
-            {
-                foreach (var secret in repoSecrets.Secrets)
-                {
-                    var updatedOrCreatedAt = secret.UpdatedAt.GetValueOrDefault(secret.CreatedAt);
-                    var item = new TreeViewItem
-                    {
-                        Header = $"{secret.Name} ({updatedOrCreatedAt:g})",
-                        Tag = secret,
-                    };
-
-                    tvSecrets.Items.Add(item);
-                }
-            }
-            else
-            {
-                var noSecretItem = new TreeViewItem
-                {
-                    Header = "No repository secrets defined"
-                };
-                tvSecrets.Items.Add(noSecretItem);
-            }
+            await RefreshSecretsAsync(client);
 
             // get current branch
             var runs = await client.Actions?.Workflows?.Runs?.List(_repoInfo.RepoOwner, _repoInfo.RepoName, new WorkflowRunsRequest() { Branch = _repoInfo.CurrentBranch }, new ApiOptions() { PageCount = 1, PageSize = maxRuns });
@@ -163,7 +141,7 @@ public partial class GHActionsToolWindow : UserControl
                 {
                     SimpleRun simpleRun = new()
                     {
-                        Conclusion = run.Conclusion.Value.StringValue,
+                        Conclusion = run.Conclusion is not null ? run.Conclusion.Value.StringValue : run.Status.StringValue,
                         Name = run.Name,
                         LogDate = run.UpdatedAt,
                         Id = run.Id.ToString(),
@@ -183,14 +161,14 @@ public partial class GHActionsToolWindow : UserControl
                         {
                             steps.Add(new SimpleJob()
                             {
-                                Conclusion = step.Conclusion.Value.StringValue,
+                                Conclusion = step.Conclusion is not null ? step.Conclusion.Value.StringValue : step.Status.StringValue,
                                 Name = step.Name,
                                 Url = $"{job.HtmlUrl}#step:{step.Number.ToString()}:1"
                             });
                         }
                         simpleJobs.Add(new SimpleJob()
                         {
-                            Conclusion = job.Conclusion.Value.StringValue,
+                            Conclusion = job.Conclusion is not null ? job.Conclusion.Value.StringValue : job.Status.StringValue,
                             Name = job.Name,
                             Id = job.Id.ToString(),
                             Jobs = steps // add the steps to the job
@@ -228,12 +206,23 @@ public partial class GHActionsToolWindow : UserControl
         refreshProgress.IsIndeterminate = false;
     }
 
-    private UIElement CreateEmojiContent(string emojiString)
+    private async Task RefreshSecretsAsync(GitHubClient client)
     {
-        var emojiBlock = new Emoji.Wpf.TextBlock();
-        emojiBlock.Text = emojiString;
-
-        return emojiBlock;
+        var repoSecrets = await client.Repository?.Actions?.Secrets?.GetAll(_repoInfo.RepoOwner, _repoInfo.RepoName);
+        List<string> secretList = new();
+        if (repoSecrets.TotalCount > 0)
+        {
+            foreach (var secret in repoSecrets.Secrets)
+            {
+                var updatedOrCreatedAt = secret.UpdatedAt.GetValueOrDefault(secret.CreatedAt);
+                secretList.Add($"{secret.Name} ({updatedOrCreatedAt:g})");
+            }
+        }
+        else
+        {
+            secretList.Add("No repository secrets defined");
+        }
+        tvSecrets.ItemsSource = secretList;
     }
 
     private static GitHubClient GetGitHubClient()
