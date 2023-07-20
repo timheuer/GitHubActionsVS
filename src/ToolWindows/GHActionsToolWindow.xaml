@@ -46,10 +46,10 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <ProgressBar x:Name="refreshProgress" Height="5" Grid.Row="0" Visibility="Collapsed" />
-        <StackPanel Grid.Row="1">
+        <Grid Grid.Row="1">
             <TextBlock HorizontalAlignment="Center" x:Name="MessageArea" />
-            <ScrollViewer VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Margin="5,5,0,0" x:Name="ActionsInfoPanel" Visibility="Collapsed">
-                <StackPanel Orientation="Vertical" VerticalAlignment="Stretch">
+            <ScrollViewer VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Margin="5,5,0,0" x:Name="ActionsInfoPanel">
+                <StackPanel Orientation="Vertical">
                     <Expander Header="Current Branch" x:Name="CurrentBranchExpander">
                         <TreeView BorderThickness="0" PreviewMouseWheel="HandlePreviewMouseWheel" x:Name="tvCurrentBranch" ItemTemplate="{DynamicResource TreeViewRunNodeDataTemplate}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"/>
                     </Expander>
@@ -62,6 +62,6 @@
                     </Expander>
                 </StackPanel>
             </ScrollViewer>
-        </StackPanel>
+        </Grid>
     </Grid>
 </UserControl>
