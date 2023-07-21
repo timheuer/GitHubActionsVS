@@ -22,6 +22,10 @@ public partial class GHActionsToolWindow : UserControl
 {
     private readonly RepoInfo _repoInfo = null;
     private readonly ToolWindowMessenger _toolWindowMessenger = null;
+    private int maxRuns = 10;
+    private bool refreshPending = false;
+    private int refreshInterval = 5;
+
 
     public GHActionsToolWindow(ToolWindowMessenger toolWindowMessenger)
     {
@@ -67,6 +71,12 @@ public partial class GHActionsToolWindow : UserControl
         _repoInfo.RepoName = null;
         _repoInfo.IsGitHub = false;
         _repoInfo.RepoUrl = null;
+
+        // get settings
+        var generalSettings = await ExtensionOptions.GetLiveInstanceAsync();
+        maxRuns = generalSettings.MaxRuns;
+        refreshInterval = generalSettings.RefreshInterval;
+        refreshPending = generalSettings.RefreshActiveJobs;
 
         // find the git folder
         var solution = await VS.Solutions.GetCurrentSolutionAsync();
@@ -127,10 +137,6 @@ public partial class GHActionsToolWindow : UserControl
         MessageArea.Visibility = Visibility.Collapsed;
         ActionsInfoPanel.Visibility = Visibility.Visible;
 
-        // get the settings
-        var generalSettings = await ExtensionOptions.GetLiveInstanceAsync();
-        var maxRuns = generalSettings.MaxRuns;
-
         refreshProgress.IsIndeterminate = true;
         refreshProgress.Visibility = Visibility.Visible;
 
@@ -163,6 +169,22 @@ public partial class GHActionsToolWindow : UserControl
                         Id = run.Id.ToString(),
                         RunNumber = run.RunNumber.ToString()
                     };
+
+                    if (refreshPending)
+                    {
+                        var timer = new System.Timers.Timer(refreshInterval*1000);
+                        timer.Elapsed += async (sender, e) =>
+                        {
+                            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+                            await LoadDataAsync();
+                        };
+                        timer.AutoReset = false;
+
+                        if (((run.Status == WorkflowRunStatus.Queued) || (run.Status == WorkflowRunStatus.InProgress) || (run.Status == WorkflowRunStatus.Pending) || (run.Status == WorkflowRunStatus.Waiting)))
+                        {
+                            timer.Start();
+                        }
+                    }
 
                     // get the jobs for the run
                     var jobs = await client.Actions.Workflows.Jobs?.List(_repoInfo.RepoOwner, _repoInfo.RepoName, run.Id);
@@ -218,7 +240,7 @@ public partial class GHActionsToolWindow : UserControl
         }
 
         CurrentBranchExpander.IsExpanded = true;
-        refreshProgress.Visibility = Visibility.Collapsed;
+        refreshProgress.Visibility = Visibility.Hidden;
         refreshProgress.IsIndeterminate = false;
     }
 

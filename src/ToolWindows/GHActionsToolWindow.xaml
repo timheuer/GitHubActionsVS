@@ -57,7 +57,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <ProgressBar x:Name="refreshProgress" Height="5" Grid.Row="0" Visibility="Collapsed" />
+        <ProgressBar x:Name="refreshProgress" Height="5" Grid.Row="0" Visibility="Hidden"/>
         <Grid Grid.Row="1">
             <TextBlock HorizontalAlignment="Center" x:Name="MessageArea" />
             <ScrollViewer VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Margin="5,5,0,0" x:Name="ActionsInfoPanel">
