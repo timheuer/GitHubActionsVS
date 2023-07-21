@@ -98,9 +98,10 @@
     <Resource Include="Resources\AddItem.png" />
     <Resource Include="Resources\Delete.png" />
     <Resource Include="Resources\Edit.png" />
-    <Resource Include="Resources\Icon.png">
+    <Content Include="Resources\Icon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <VSCTCompile Include="VSCommandTable.vsct">
