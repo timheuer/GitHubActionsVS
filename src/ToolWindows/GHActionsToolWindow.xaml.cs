@@ -7,6 +7,10 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using GitHubActionsVS.UserControls;
+using Application = System.Windows.Application;
+using System.Windows.Media;
+using MessageBox = Community.VisualStudio.Toolkit.MessageBox;
 
 namespace GitHubActionsVS;
 
@@ -65,6 +69,12 @@ public partial class GHActionsToolWindow : UserControl
 
         // find the git folder
         var solution = await VS.Solutions.GetCurrentSolutionAsync();
+        if (solution is null)
+        {
+            Debug.WriteLine("No solution found");
+            ShowInfoMessage("No project or solution loaded");
+            return;
+        }
         var projectPath = solution?.FullPath;
 
         _repoInfo.FindGitFolder(projectPath, out string gitPath);
@@ -135,7 +145,7 @@ public partial class GHActionsToolWindow : UserControl
             if (runs.TotalCount > 0)
             {
                 // creating simplified model of the GH info for the treeview
-                
+
                 // iterate throught the runs
                 foreach (var run in runs.WorkflowRuns)
                 {
@@ -255,6 +265,88 @@ public partial class GHActionsToolWindow : UserControl
             eventArg.Source = sender;
             var parent = ((Control)sender).Parent as UIElement;
             parent.RaiseEvent(eventArg);
+        }
+    }
+
+    private async void AddSecret_Click(object sender, RoutedEventArgs e)
+    {
+        await UpsertRepositorySecret(string.Empty);
+    }
+
+    private async void EditSecret_Click(object sender, RoutedEventArgs e)
+    {
+        MenuItem menuItem = (MenuItem)sender;
+        TextBlock tvi = GetParentTreeViewItem(menuItem);
+        if (tvi is not null)
+        {
+            string header = tvi.Text.ToString();
+            string secretName = header.Substring(0, header.IndexOf(" ("));
+            await UpsertRepositorySecret(secretName);
+        }
+    }
+
+    private TextBlock GetParentTreeViewItem(MenuItem menuItem)
+    {
+        var contextMenu = menuItem.CommandParameter as ContextMenu;
+        if (contextMenu is not null)
+        {
+            var treeViewItem = contextMenu.PlacementTarget as TextBlock;
+            if (treeViewItem is not null)
+            {
+                return treeViewItem;
+            }
+        }
+        return null;
+    }
+
+    private async void DeleteSecret_Click(object sender, RoutedEventArgs e)
+    {
+        MenuItem menuItem = (MenuItem)sender;
+        TextBlock tvi = GetParentTreeViewItem(menuItem);
+
+        if (tvi is not null)
+        {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            // confirm the delete first
+            int result = VsShellUtilities.ShowMessageBox(ServiceProvider.GlobalProvider, "Are you sure you want to delete this secret?", "Confirm Delete", Microsoft.VisualStudio.Shell.Interop.OLEMSGICON.OLEMSGICON_QUERY, Microsoft.VisualStudio.Shell.Interop.OLEMSGBUTTON.OLEMSGBUTTON_YESNOCANCEL, Microsoft.VisualStudio.Shell.Interop.OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_THIRD);
+
+            var confirmResult = (MessageBoxResult)result;
+
+            if (confirmResult == MessageBoxResult.Yes)
+            {
+                string header = tvi.Text.ToString();
+                string secretName = header.Substring(0, header.IndexOf(" ("));
+
+                GitHubClient client = GetGitHubClient();
+                await client.Repository.Actions.Secrets.Delete(_repoInfo.RepoOwner, _repoInfo.RepoName, secretName);
+                await RefreshSecretsAsync(client);
+            }
+        }
+    }
+
+    private async Task UpsertRepositorySecret(string secretName)
+    {
+        AddEditSecret addEditSecret = new AddEditSecret(secretName)
+        {
+            Owner = Application.Current.MainWindow
+        };
+        bool? result = addEditSecret.ShowDialog();
+        if (result == true)
+        {
+            GitHubClient client = GetGitHubClient();
+            var pubKey = await client.Repository.Actions.Secrets.GetPublicKey(_repoInfo.RepoOwner, _repoInfo.RepoName);
+
+            UpsertRepositorySecret encryptedSecret = new UpsertRepositorySecret();
+            if (pubKey != null)
+            {
+                var bytes = System.Text.Encoding.UTF8.GetBytes(addEditSecret.SecretValue);
+                var key = Convert.FromBase64String(pubKey.Key);
+                var sealedKeyBox = Sodium.SealedPublicKeyBox.Create(bytes, key);
+                encryptedSecret.KeyId = pubKey.KeyId;
+                encryptedSecret.EncryptedValue = Convert.ToBase64String(sealedKeyBox);
+                _ = await client.Repository.Actions.Secrets.CreateOrUpdate(_repoInfo.RepoOwner, _repoInfo.RepoName, addEditSecret.SecretName, encryptedSecret);
+            }
+            await RefreshSecretsAsync(client);
         }
     }
 }

@@ -56,7 +56,29 @@
                     <Expander Header="Settings">
                         <TreeView BorderThickness="0">
                             <TreeViewItem Header="Secrets" HeaderTemplate="{DynamicResource SecretsHeaderTemplate}">
-                                <TreeViewItem Header="Repository Secrets" x:Name="tvSecrets"/>
+                                <TreeViewItem x:Name="tvSecrets">
+                                    <TreeViewItem.Header>
+                                        <TextBlock Text="Repository Secrets">
+                                            <TextBlock.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem Header="Add Secret" Click="AddSecret_Click" />
+                                                </ContextMenu>
+                                            </TextBlock.ContextMenu>
+                                        </TextBlock>
+                                    </TreeViewItem.Header>
+                                    <TreeViewItem.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding}">
+                                                <TextBlock.ContextMenu>
+                                                    <ContextMenu>
+                                                        <MenuItem Header="Edit Secret" Click="EditSecret_Click" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ContextMenu}}}" />
+                                                        <MenuItem Header="Delete Secret" Click="DeleteSecret_Click" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ContextMenu}}}" />
+                                                    </ContextMenu>
+                                                </TextBlock.ContextMenu>
+                                            </TextBlock>
+                                        </DataTemplate>
+                                    </TreeViewItem.ItemTemplate>
+                                </TreeViewItem>
                             </TreeViewItem>
                         </TreeView>
                     </Expander>

@@ -14,6 +14,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 [assembly: ProvideCodeBase(CodeBase = @"$PackageFolder$\LibGit2Sharp.dll")]
+[assembly: ProvideCodeBase(CodeBase = @"$PackageFolder$\Sodium.Core.dll")]
 
 namespace System.Runtime.CompilerServices;
 public class IsExternalInit { }
