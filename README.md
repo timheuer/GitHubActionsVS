@@ -39,9 +39,17 @@ You can manually refresh the view by clicking the refresh icon in the toolbar:
 
 ![image](https://github.com/timheuer/GitHubActionsVS/assets/4821/865d424d-29e1-40e8-96c4-1eeffb458682)
 
-### Edit GitHub secrets (Coming soon...)
+### Edit GitHub secrets
+The limitation currently is this lists and enables editing of Repository-level secrets (not org or deployment environments yet).
 
-Update or Add repo secrets directly from within Visual Studio.
+To add a secret right-click on the Repository Secrets node and select `Add Secret`
+
+![image](https://github.com/timheuer/GitHubActionsVS/assets/4821/264acf44-509b-4442-a9b9-80f93ff5cad5)
+
+This will launch a modal dialog to add the repository secret. This is the same for edit (right-click on an existing secret) which will enable you to edit an existing one or delete.
+
+![image](https://github.com/timheuer/GitHubActionsVS/assets/4821/ba12fe8b-9f33-46b7-a4a4-1ae343a0ce34)
+
 
 ## Contributors
 
