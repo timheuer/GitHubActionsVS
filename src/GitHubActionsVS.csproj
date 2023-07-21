@@ -49,6 +49,7 @@
     <Compile Include="Commands\RefreshRepoCommand.cs" />
     <Compile Include="Converters\ConclusionColorConverter.cs" />
     <Compile Include="Converters\ConclusionIconConverter.cs" />
+    <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="Helpers\CredentialManager.cs" />
     <Compile Include="Helpers\RepoInfo.cs" />
     <Compile Include="Models\BaseWorkflowType.cs" />
@@ -80,6 +81,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Resource Include="Resources\OpenWebSite.png" />
     <Resource Include="Resources\codicon.ttf" />
     <Content Include="LICENSE">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -93,10 +95,12 @@
       <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Icon.png">
+    <Resource Include="Resources\AddItem.png" />
+    <Resource Include="Resources\Delete.png" />
+    <Resource Include="Resources\Edit.png" />
+    <Resource Include="Resources\Icon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
+    </Resource>
   </ItemGroup>
   <ItemGroup>
     <VSCTCompile Include="VSCommandTable.vsct">

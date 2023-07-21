@@ -19,6 +19,7 @@
         <FontFamily x:Key="CodiconFont">pack://application:,,,/GitHubActionsVS;component/Resources/#codicon</FontFamily>
         <ivc:ConclusionIconConverter x:Key="ConclusionIconConverter" />
         <ivc:ConclusionColorConverter x:Key="ConclusionColorConverter" />
+        <ivc:NullToVisibilityConverter x:Key="NullVisibilityConverter" />
         <Style TargetType="{x:Type Expander}">
             <Setter Property="toolkit:Themes.UseVsTheme" Value="True" />
         </Style>
@@ -35,7 +36,11 @@
             <TextBlock Text="{Binding}">
                 <TextBlock.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="Add Secret" Click="AddSecret_Click" />
+                        <MenuItem Header="Add Secret" Click="AddSecret_Click">
+                            <MenuItem.Icon>
+                                <Image Source="pack://application:,,,/GitHubActionsVS;component/Resources/AddItem.png" />
+                            </MenuItem.Icon>
+                        </MenuItem>
                     </ContextMenu>
                 </TextBlock.ContextMenu>
             </TextBlock>
@@ -45,7 +50,17 @@
                 <TextBlock VerticalAlignment="Center" FontFamily="{StaticResource CodiconFont}" 
                    Foreground="{Binding Path=Conclusion, Converter={StaticResource ConclusionColorConverter}}"
                    Text="{Binding Path=Conclusion, Converter={StaticResource ConclusionIconConverter}}"/>
-                <emoji:TextBlock Text="{Binding DisplayName}" VerticalAlignment="Bottom" />
+                <emoji:TextBlock Text="{Binding DisplayName}" VerticalAlignment="Bottom" Tag="{Binding Url}">
+                    <TextBlock.ContextMenu>
+                        <ContextMenu Visibility="{Binding Url, Converter={StaticResource NullVisibilityConverter}}">
+                            <MenuItem Header="View Log" Click="ViewLog_Click" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ContextMenu}}}">
+                                <MenuItem.Icon>
+                                    <Image Source="pack://application:,,,/GitHubActionsVS;component/Resources/OpenWebSite.png" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </ContextMenu>
+                    </TextBlock.ContextMenu>
+                </emoji:TextBlock>
             </StackPanel>
         </HierarchicalDataTemplate>
         <DataTemplate x:Key="EnvironmentItemTemplate">
@@ -75,8 +90,16 @@
                                             <TextBlock Text="{Binding}">
                                                 <TextBlock.ContextMenu>
                                                     <ContextMenu>
-                                                        <MenuItem Header="Edit Secret" Click="EditSecret_Click" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ContextMenu}}}" />
-                                                        <MenuItem Header="Delete Secret" Click="DeleteSecret_Click" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ContextMenu}}}" />
+                                                        <MenuItem Header="Edit Secret" Click="EditSecret_Click" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ContextMenu}}}">
+                                                            <MenuItem.Icon>
+                                                                <Image Source="pack://application:,,,/GitHubActionsVS;component/Resources/Edit.png" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                        <MenuItem Header="Delete Secret" Click="DeleteSecret_Click" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ContextMenu}}}">
+                                                            <MenuItem.Icon>
+                                                                <Image Source="pack://application:,,,/GitHubActionsVS;component/Resources/Delete.png" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
                                                     </ContextMenu>
                                                 </TextBlock.ContextMenu>
                                             </TextBlock>

@@ -333,7 +333,7 @@ public partial class GHActionsToolWindow : UserControl
     {
         MenuItem menuItem = (MenuItem)sender;
         TextBlock tvi = GetParentTreeViewItem(menuItem);
-        if (tvi is not null)
+        if (tvi is not null && tvi.Text.ToLowerInvariant() != "no repository secrets defined") // yes a hack
         {
             string header = tvi.Text.ToString();
             string secretName = header.Substring(0, header.IndexOf(" ("));
@@ -360,7 +360,7 @@ public partial class GHActionsToolWindow : UserControl
         MenuItem menuItem = (MenuItem)sender;
         TextBlock tvi = GetParentTreeViewItem(menuItem);
 
-        if (tvi is not null)
+        if (tvi is not null && tvi.Text.ToLowerInvariant() != "no repository secrets defined") // yes a hack
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             // confirm the delete first
@@ -403,6 +403,19 @@ public partial class GHActionsToolWindow : UserControl
                 _ = await client.Repository.Actions.Secrets.CreateOrUpdate(_repoInfo.RepoOwner, _repoInfo.RepoName, addEditSecret.SecretName, encryptedSecret);
             }
             await RefreshSecretsAsync(client);
+        }
+    }
+
+    private void ViewLog_Click(object sender, RoutedEventArgs e)
+    {
+        MenuItem menuItem = (MenuItem)sender;
+        TextBlock tvi = GetParentTreeViewItem(menuItem);
+
+        // check the tag value to ensure it isn't null
+        if (tvi is not null && tvi.Tag is not null)
+        {
+            string logUrl = tvi.Tag.ToString();
+            Process.Start(logUrl);
         }
     }
 }
