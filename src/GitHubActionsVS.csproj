@@ -52,6 +52,7 @@
     <Compile Include="Helpers\CredentialManager.cs" />
     <Compile Include="Helpers\RepoInfo.cs" />
     <Compile Include="Models\BaseWorkflowType.cs" />
+    <Compile Include="Models\SimpleEnvironment.cs" />
     <Compile Include="Models\SimpleJob.cs" />
     <Compile Include="Models\SimpleRun.cs" />
     <Compile Include="Options\ExtensionOptions.cs" />

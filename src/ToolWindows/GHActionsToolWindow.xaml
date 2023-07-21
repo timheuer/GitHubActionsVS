@@ -31,6 +31,15 @@
                 <TextBlock Text="{Binding}" Margin="5,0" />
             </StackPanel>
         </DataTemplate>
+        <DataTemplate x:Key="RepoSecretsHeaderTemplate">
+            <TextBlock Text="{Binding}">
+                <TextBlock.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Add Secret" Click="AddSecret_Click" />
+                    </ContextMenu>
+                </TextBlock.ContextMenu>
+            </TextBlock>
+        </DataTemplate>
         <HierarchicalDataTemplate x:Key="TreeViewRunNodeDataTemplate" ItemsSource="{Binding Jobs}">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
                 <TextBlock VerticalAlignment="Center" FontFamily="{StaticResource CodiconFont}" 
@@ -39,6 +48,9 @@
                 <emoji:TextBlock Text="{Binding DisplayName}" VerticalAlignment="Bottom" />
             </StackPanel>
         </HierarchicalDataTemplate>
+        <DataTemplate x:Key="EnvironmentItemTemplate">
+            <TextBlock Text="{Binding Name}"/>
+        </DataTemplate>
     </UserControl.Resources>
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
@@ -51,21 +63,13 @@
             <ScrollViewer VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Margin="5,5,0,0" x:Name="ActionsInfoPanel">
                 <StackPanel Orientation="Vertical">
                     <Expander Header="Current Branch" x:Name="CurrentBranchExpander">
-                        <TreeView BorderThickness="0" PreviewMouseWheel="HandlePreviewMouseWheel" x:Name="tvCurrentBranch" ItemTemplate="{DynamicResource TreeViewRunNodeDataTemplate}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"/>
+                        <TreeView BorderThickness="0" PreviewMouseWheel="HandlePreviewMouseWheel" x:Name="tvCurrentBranch" ItemTemplate="{StaticResource TreeViewRunNodeDataTemplate}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"/>
                     </Expander>
                     <Expander Header="Settings">
-                        <TreeView BorderThickness="0">
-                            <TreeViewItem Header="Secrets" HeaderTemplate="{DynamicResource SecretsHeaderTemplate}">
-                                <TreeViewItem x:Name="tvSecrets">
-                                    <TreeViewItem.Header>
-                                        <TextBlock Text="Repository Secrets">
-                                            <TextBlock.ContextMenu>
-                                                <ContextMenu>
-                                                    <MenuItem Header="Add Secret" Click="AddSecret_Click" />
-                                                </ContextMenu>
-                                            </TextBlock.ContextMenu>
-                                        </TextBlock>
-                                    </TreeViewItem.Header>
+                        <TreeView BorderThickness="0" PreviewMouseWheel="HandlePreviewMouseWheel">
+                            <TreeViewItem Header="Environments" x:Name="tvEnvironments" ItemTemplate="{StaticResource EnvironmentItemTemplate}" />
+                            <TreeViewItem Header="Secrets" HeaderTemplate="{StaticResource SecretsHeaderTemplate}">
+                                <TreeViewItem x:Name="tvSecrets" HeaderTemplate="{StaticResource RepoSecretsHeaderTemplate}">
                                     <TreeViewItem.ItemTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding}">

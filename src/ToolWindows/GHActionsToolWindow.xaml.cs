@@ -4,6 +4,7 @@ using GitHubActionsVS.ToolWindows;
 using Octokit;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -114,6 +115,9 @@ public partial class GHActionsToolWindow : UserControl
     private void ClearTreeViews()
     {
         tvSecrets.ItemsSource = null;
+        tvSecrets.Header = "Repository Secrets";
+        tvEnvironments.ItemsSource = null;
+        tvEnvironments.Header = "Environments";
         tvCurrentBranch.ItemsSource = null;
         CurrentBranchExpander.IsExpanded = false;
     }
@@ -136,6 +140,8 @@ public partial class GHActionsToolWindow : UserControl
         {
             // get secrets
             await RefreshSecretsAsync(client);
+            // get environments
+            await RefreshEnvironmentsAsync(client);
 
             // get current branch
             var runs = await client.Actions?.Workflows?.Runs?.List(_repoInfo.RepoOwner, _repoInfo.RepoName, new WorkflowRunsRequest() { Branch = _repoInfo.CurrentBranch }, new ApiOptions() { PageCount = 1, PageSize = maxRuns });
@@ -216,12 +222,39 @@ public partial class GHActionsToolWindow : UserControl
         refreshProgress.IsIndeterminate = false;
     }
 
+    private async Task RefreshEnvironmentsAsync(GitHubClient client)
+    {
+        var repoEnvs = await client.Repository?.Environment?.GetAll(_repoInfo.RepoOwner, _repoInfo.RepoName);
+        List<SimpleEnvironment> envList = new List<SimpleEnvironment>();
+        if (repoEnvs.TotalCount > 0)
+        {
+            tvEnvironments.Header = $"Environments ({repoEnvs.TotalCount})";
+            foreach (var env in repoEnvs.Environments)
+            {
+                var envItem = new SimpleEnvironment
+                {
+                    Name = env.Name,
+                    Url = env.HtmlUrl
+                };
+
+                envList.Add(envItem);
+            }
+        }
+        else
+        {
+            envList.Add(new() {  Name = "No environments defined"});
+        }
+
+        tvEnvironments.ItemsSource = envList;
+    }
+
     private async Task RefreshSecretsAsync(GitHubClient client)
     {
         var repoSecrets = await client.Repository?.Actions?.Secrets?.GetAll(_repoInfo.RepoOwner, _repoInfo.RepoName);
         List<string> secretList = new();
         if (repoSecrets.TotalCount > 0)
         {
+            tvSecrets.Header = $"Repository Secrets ({repoSecrets.TotalCount})";
             foreach (var secret in repoSecrets.Secrets)
             {
                 var updatedOrCreatedAt = secret.UpdatedAt.GetValueOrDefault(secret.CreatedAt);
@@ -230,6 +263,7 @@ public partial class GHActionsToolWindow : UserControl
         }
         else
         {
+            tvSecrets.Header = $"Repository Secrets";
             secretList.Add("No repository secrets defined");
         }
         tvSecrets.ItemsSource = secretList;
