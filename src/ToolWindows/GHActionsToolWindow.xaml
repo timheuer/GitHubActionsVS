@@ -32,6 +32,12 @@
                 <TextBlock Text="{Binding}" Margin="5,0" />
             </StackPanel>
         </DataTemplate>
+        <DataTemplate x:Key="EnvironmentHeaderTemplate">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock FontFamily="{StaticResource CodiconFont}" Text="&#xEBA3;" VerticalAlignment="Center" />
+                <TextBlock Text="{Binding}" Margin="5,0" />
+            </StackPanel>
+        </DataTemplate>
         <DataTemplate x:Key="RepoSecretsHeaderTemplate">
             <TextBlock Text="{Binding}">
                 <TextBlock.ContextMenu>
@@ -82,7 +88,7 @@
                     </Expander>
                     <Expander Header="Settings">
                         <TreeView BorderThickness="0" PreviewMouseWheel="HandlePreviewMouseWheel">
-                            <TreeViewItem Header="Environments" x:Name="tvEnvironments" ItemTemplate="{StaticResource EnvironmentItemTemplate}" />
+                            <TreeViewItem Header="Environments" HeaderTemplate="{StaticResource EnvironmentHeaderTemplate}" x:Name="tvEnvironments" ItemTemplate="{StaticResource EnvironmentItemTemplate}" />
                             <TreeViewItem Header="Secrets" HeaderTemplate="{StaticResource SecretsHeaderTemplate}">
                                 <TreeViewItem x:Name="tvSecrets" HeaderTemplate="{StaticResource RepoSecretsHeaderTemplate}">
                                     <TreeViewItem.ItemTemplate>
