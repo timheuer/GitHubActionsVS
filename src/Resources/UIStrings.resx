@@ -154,8 +154,20 @@
     <comment>For when the git repo is not github.com</comment>
   </data>
   <data name="HEADER_CURRENT_BRANCH" xml:space="preserve">
-    <value>Current Branch ({0})</value>
+    <value>Current Branch</value>
     <comment>Current Branch text formatted with current branch</comment>
+  </data>
+  <data name="HEADER_ENVIRONMENTS" xml:space="preserve">
+    <value>Environments</value>
+    <comment>Header for environments</comment>
+  </data>
+  <data name="HEADER_REPO_SECRETS" xml:space="preserve">
+    <value>Repository Secrets</value>
+    <comment>Header for repo secrets</comment>
+  </data>
+  <data name="HEADER_SECRETS" xml:space="preserve">
+    <value>Secrets</value>
+    <comment>Header for secrets</comment>
   </data>
   <data name="HEADER_SETTINGS" xml:space="preserve">
     <value>Settings</value>

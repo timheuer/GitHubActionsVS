@@ -126,9 +126,9 @@ public partial class GHActionsToolWindow : UserControl
     private void ClearTreeViews()
     {
         tvSecrets.ItemsSource = null;
-        tvSecrets.Header = "Repository Secrets";
+        tvSecrets.Header = resx.HEADER_REPO_SECRETS;
         tvEnvironments.ItemsSource = null;
-        tvEnvironments.Header = "Environments";
+        tvEnvironments.Header = resx.HEADER_ENVIRONMENTS;
         tvCurrentBranch.ItemsSource = null;
         CurrentBranchExpander.IsExpanded = false;
     }
@@ -251,7 +251,7 @@ public partial class GHActionsToolWindow : UserControl
         List<SimpleEnvironment> envList = new List<SimpleEnvironment>();
         if (repoEnvs.TotalCount > 0)
         {
-            tvEnvironments.Header = $"Environments ({repoEnvs.TotalCount})";
+            tvEnvironments.Header = $"{resx.HEADER_ENVIRONMENTS} ({repoEnvs.TotalCount})";
             foreach (var env in repoEnvs.Environments)
             {
                 var envItem = new SimpleEnvironment
@@ -277,7 +277,7 @@ public partial class GHActionsToolWindow : UserControl
         List<string> secretList = new();
         if (repoSecrets.TotalCount > 0)
         {
-            tvSecrets.Header = $"Repository Secrets ({repoSecrets.TotalCount})";
+            tvSecrets.Header = $"{resx.HEADER_REPO_SECRETS} ({repoSecrets.TotalCount})";
             foreach (var secret in repoSecrets.Secrets)
             {
                 var updatedOrCreatedAt = secret.UpdatedAt.GetValueOrDefault(secret.CreatedAt);
@@ -286,7 +286,7 @@ public partial class GHActionsToolWindow : UserControl
         }
         else
         {
-            tvSecrets.Header = $"Repository Secrets";
+            tvSecrets.Header = resx.HEADER_REPO_SECRETS;
             secretList.Add(resx.NO_REPO_SECRETS);
         }
         tvSecrets.ItemsSource = secretList;

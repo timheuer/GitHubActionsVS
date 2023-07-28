@@ -142,11 +142,38 @@ namespace GitHubActionsVS.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Current Branch ({0}).
+        ///   Looks up a localized string similar to Current Branch.
         /// </summary>
         public static string HEADER_CURRENT_BRANCH {
             get {
                 return ResourceManager.GetString("HEADER_CURRENT_BRANCH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Environments.
+        /// </summary>
+        public static string HEADER_ENVIRONMENTS {
+            get {
+                return ResourceManager.GetString("HEADER_ENVIRONMENTS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Repository Secrets.
+        /// </summary>
+        public static string HEADER_REPO_SECRETS {
+            get {
+                return ResourceManager.GetString("HEADER_REPO_SECRETS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Secrets.
+        /// </summary>
+        public static string HEADER_SECRETS {
+            get {
+                return ResourceManager.GetString("HEADER_SECRETS", resourceCulture);
             }
         }
         
