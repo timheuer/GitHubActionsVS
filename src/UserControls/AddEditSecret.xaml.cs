@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using System.Windows;
+using resx = GitHubActionsVS.Resources.UIStrings;
 
 namespace GitHubActionsVS.UserControls;
 /// <summary>
@@ -12,8 +13,8 @@ public partial class AddEditSecret : Window
         InitializeComponent();
         txtName.Text = secretName;
         txtName.IsEnabled = string.IsNullOrWhiteSpace(secretName);
-        Title = string.IsNullOrWhiteSpace(secretName) ? "Add Secret" : "Edit Secret";
-        btnCreate.Content = string.IsNullOrWhiteSpace(secretName) ? "Create" : "Update";
+        Title = string.IsNullOrWhiteSpace(secretName) ? resx.ADD_SECRET : resx.EDIT_SECRET;
+        btnCreate.Content = string.IsNullOrWhiteSpace(secretName) ? resx.BUTTON_SAVE : resx.BUTTON_UPDATE;
     }
 
     public string SecretName => txtName.Text.Trim();

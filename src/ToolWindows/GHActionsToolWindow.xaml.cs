@@ -12,6 +12,7 @@ using GitHubActionsVS.UserControls;
 using Application = System.Windows.Application;
 using System.Windows.Media;
 using MessageBox = Community.VisualStudio.Toolkit.MessageBox;
+using resx = GitHubActionsVS.Resources.UIStrings;
 
 namespace GitHubActionsVS;
 
@@ -83,7 +84,7 @@ public partial class GHActionsToolWindow : UserControl
         if (solution is null)
         {
             Debug.WriteLine("No solution found");
-            ShowInfoMessage("No project or solution loaded");
+            ShowInfoMessage(resx.NO_PROJ_LOADED);
             return;
         }
         var projectPath = solution?.FullPath;
@@ -93,7 +94,7 @@ public partial class GHActionsToolWindow : UserControl
         if (string.IsNullOrWhiteSpace(gitPath))
         {
             Debug.WriteLine("No git repo found");
-            ShowInfoMessage("No git repo found");
+            ShowInfoMessage(resx.NO_GIT_REPO);
         }
         else
         {
@@ -106,7 +107,7 @@ public partial class GHActionsToolWindow : UserControl
             else
             {
                 Debug.WriteLine("Not a GitHub repo");
-                ShowInfoMessage("Repo found, but not a github.com");
+                ShowInfoMessage(resx.GIT_NOT_GITHUB);
             }
         }
     }
@@ -224,7 +225,7 @@ public partial class GHActionsToolWindow : UserControl
                 // no runs found
                 var noRunsItem = new SimpleRun
                 {
-                    Name = "No workflow runs found for query",
+                    Name = resx.NO_WORKFLOW_RUNS,
                     Conclusion = "warning",
                     LogDate = DateTime.Now,
                     RunNumber = "N/A"
@@ -264,7 +265,7 @@ public partial class GHActionsToolWindow : UserControl
         }
         else
         {
-            envList.Add(new() {  Name = "No environments defined"});
+            envList.Add(new() {  Name = resx.NO_ENV});
         }
 
         tvEnvironments.ItemsSource = envList;
@@ -286,7 +287,7 @@ public partial class GHActionsToolWindow : UserControl
         else
         {
             tvSecrets.Header = $"Repository Secrets";
-            secretList.Add("No repository secrets defined");
+            secretList.Add(resx.NO_REPO_SECRETS);
         }
         tvSecrets.ItemsSource = secretList;
     }
@@ -333,7 +334,7 @@ public partial class GHActionsToolWindow : UserControl
     {
         MenuItem menuItem = (MenuItem)sender;
         TextBlock tvi = GetParentTreeViewItem(menuItem);
-        if (tvi is not null && tvi.Text.ToLowerInvariant() != "no repository secrets defined") // yes a hack
+        if (tvi is not null && tvi.Text.ToLowerInvariant() != resx.NO_REPO_SECRETS.ToLowerInvariant()) // yes a hack
         {
             string header = tvi.Text.ToString();
             string secretName = header.Substring(0, header.IndexOf(" ("));
@@ -360,11 +361,11 @@ public partial class GHActionsToolWindow : UserControl
         MenuItem menuItem = (MenuItem)sender;
         TextBlock tvi = GetParentTreeViewItem(menuItem);
 
-        if (tvi is not null && tvi.Text.ToLowerInvariant() != "no repository secrets defined") // yes a hack
+        if (tvi is not null && tvi.Text.ToLowerInvariant() != resx.NO_REPO_SECRETS.ToLowerInvariant()) // yes a hack
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             // confirm the delete first
-            int result = VsShellUtilities.ShowMessageBox(ServiceProvider.GlobalProvider, "Are you sure you want to delete this secret?", "Confirm Delete", Microsoft.VisualStudio.Shell.Interop.OLEMSGICON.OLEMSGICON_QUERY, Microsoft.VisualStudio.Shell.Interop.OLEMSGBUTTON.OLEMSGBUTTON_YESNOCANCEL, Microsoft.VisualStudio.Shell.Interop.OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_THIRD);
+            int result = VsShellUtilities.ShowMessageBox(ServiceProvider.GlobalProvider, resx.CONFIRM_DELETE, resx.CONFIRM_DELETE_TITLE, Microsoft.VisualStudio.Shell.Interop.OLEMSGICON.OLEMSGICON_QUERY, Microsoft.VisualStudio.Shell.Interop.OLEMSGBUTTON.OLEMSGBUTTON_YESNOCANCEL, Microsoft.VisualStudio.Shell.Interop.OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_THIRD);
 
             var confirmResult = (MessageBoxResult)result;
 
