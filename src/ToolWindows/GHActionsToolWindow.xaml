@@ -50,11 +50,11 @@
             <TextBlock HorizontalAlignment="Center" x:Name="MessageArea" />
             <ScrollViewer VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Margin="5,5,0,0" x:Name="ActionsInfoPanel" Visibility="Collapsed">
                 <StackPanel Orientation="Vertical" VerticalAlignment="Stretch">
-                    <Expander Header="Current Branch" x:Name="CurrentBranchExpander">
-                        <TreeView BorderThickness="0" PreviewMouseWheel="HandlePreviewMouseWheel" x:Name="tvCurrentBranch" ItemTemplate="{DynamicResource TreeViewRunNodeDataTemplate}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"/>
+                    <Expander Header="Current Branch" x:Name="CurrentBranchExpander" FontWeight="Bold">
+                        <TreeView FontWeight="Normal" BorderThickness="0" PreviewMouseWheel="HandlePreviewMouseWheel" x:Name="tvCurrentBranch" ItemTemplate="{DynamicResource TreeViewRunNodeDataTemplate}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"/>
                     </Expander>
-                    <Expander Header="Settings">
-                        <TreeView BorderThickness="0">
+                    <Expander Header="Settings" FontWeight="Bold">
+                        <TreeView BorderThickness="0" FontWeight="Normal">
                             <TreeViewItem Header="Secrets" HeaderTemplate="{DynamicResource SecretsHeaderTemplate}">
                                 <TreeViewItem Header="Repository Secrets" x:Name="tvSecrets"/>
                             </TreeViewItem>
