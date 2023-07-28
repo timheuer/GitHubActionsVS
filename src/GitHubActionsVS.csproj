@@ -49,9 +49,11 @@
     <Compile Include="Commands\RefreshRepoCommand.cs" />
     <Compile Include="Converters\ConclusionColorConverter.cs" />
     <Compile Include="Converters\ConclusionIconConverter.cs" />
+    <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="Helpers\CredentialManager.cs" />
     <Compile Include="Helpers\RepoInfo.cs" />
     <Compile Include="Models\BaseWorkflowType.cs" />
+    <Compile Include="Models\SimpleEnvironment.cs" />
     <Compile Include="Models\SimpleJob.cs" />
     <Compile Include="Models\SimpleRun.cs" />
     <Compile Include="Options\ExtensionOptions.cs" />
@@ -65,6 +67,9 @@
     <Compile Include="ToolWindows\MessagePayload.cs" />
     <Compile Include="ToolWindows\MessageCommand.cs" />
     <Compile Include="ToolWindows\ToolWindowMessenger.cs" />
+    <Compile Include="UserControls\AddEditSecret.xaml.cs">
+      <DependentUpon>AddEditSecret.xaml</DependentUpon>
+    </Compile>
     <Compile Include="VSCommandTable.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -72,6 +77,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="libsodium.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Resource Include="Resources\OpenWebSite.png" />
     <Resource Include="Resources\codicon.ttf" />
     <Content Include="LICENSE">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -81,18 +91,13 @@
       <SubType>Designer</SubType>
       <Generator>VsixManifestGenerator</Generator>
     </None>
-    <Content Include="lib\win32\arm64\git2-e632535.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
     <Content Include="lib\win32\x64\git2-e632535.dll">
       <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="lib\win32\x86\git2-e632535.dll">
-      <IncludeInVSIX>true</IncludeInVSIX>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Resource Include="Resources\AddItem.png" />
+    <Resource Include="Resources\Delete.png" />
+    <Resource Include="Resources\Edit.png" />
     <Content Include="Resources\Icon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
@@ -108,6 +113,10 @@
   <ItemGroup>
     <Compile Include="ToolWindows\ActionsToolWindow.cs" />
     <Page Include="ToolWindows\GHActionsToolWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\AddEditSecret.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -149,6 +158,9 @@
     </PackageReference>
     <PackageReference Include="Octokit">
       <Version>7.0.1</Version>
+    </PackageReference>
+    <PackageReference Include="Sodium.Core">
+      <Version>1.3.3</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
