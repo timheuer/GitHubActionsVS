@@ -3,7 +3,7 @@
 [![VS Marketplace Badge](https://img.shields.io/visual-studio-marketplace/v/timheuer.GitHubActionsVS?label=VS%20Marketplace&color=purple&logo=visualstudio)](https://marketplace.visualstudio.com/items?itemName=TimHeuer.GitHubActionsVS)
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 # GitHub Actions for Visual Studio
@@ -61,6 +61,7 @@ This will launch a modal dialog to add the repository secret. This is the same f
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://davidpine.net"><img src="https://avatars.githubusercontent.com/u/7679720?v=4?s=100" width="100px;" alt="David Pine"/><br /><sub><b>David Pine</b></sub></a><br /><a href="https://github.com/timheuer/GitHubActionsVS/commits?author=IEvangelist" title="Code">💻</a> <a href="https://github.com/timheuer/GitHubActionsVS/commits?author=IEvangelist" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://timheuer.com/blog/"><img src="https://avatars.githubusercontent.com/u/4821?v=4?s=100" width="100px;" alt="Tim Heuer"/><br /><sub><b>Tim Heuer</b></sub></a><br /><a href="https://github.com/timheuer/GitHubActionsVS/commits?author=timheuer" title="Code">💻</a> <a href="https://github.com/timheuer/GitHubActionsVS/commits?author=timheuer" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/zlatanov"><img src="https://avatars.githubusercontent.com/u/2470527?v=4?s=100" width="100px;" alt="Ivan Zlatanov"/><br /><sub><b>Ivan Zlatanov</b></sub></a><br /><a href="https://github.com/timheuer/GitHubActionsVS/commits?author=zlatanov" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
