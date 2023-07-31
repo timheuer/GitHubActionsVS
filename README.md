@@ -10,7 +10,8 @@
 
 The GitHub Actions extension lets you manage your workflows, view the workflow run history, and edit GitHub secrets.
 
-![image](https://github.com/timheuer/GitHubActionsVS/assets/4821/43e011c8-2ac1-4ae9-aa95-747fe033e5c6)
+<img width="668" alt="image" src="https://github.com/timheuer/GitHubActionsVS/assets/4821/aaa07dd3-512e-4a9b-a768-087372bf5e34">
+
 
 ## Features
 
@@ -24,15 +25,19 @@ If an active solution exists and it is both a git and GitHub.com repository, the
 
 To view the history simply select a run and navigate through the tree view to see details. You can double-click on a leaf node to launch to the log point on the repo to view the rich log output.
 
-> Not yet implemented: The ability to [monitor a workflow run while in process](https://github.com/timheuer/GitHubActionsVS/issues/15).
-
 If you close and open a new project the window will be refreshed to represent the current state.
+
+Based on your settings you can enable 'polling' of active running workflows that are not in the `completed` status. This will refresh the Current Branch workflow runs until the state is completed.
 
 #### Limit run count retrieval
 By default a maximum of last 10 runs are retrieved. You can change this in the `Tools...Options` of Visual Studio and set an integer value.
 
-![image](https://github.com/timheuer/GitHubActionsVS/assets/4821/588fc711-1c02-4268-a9a4-32411028f213)
+![image](https://github.com/timheuer/GitHubActionsVS/assets/4821/661f28cb-b906-476f-ae57-accfbdd63f1f)
 
+#### Trigger a Workflow
+If your Workflows enable a dispatch capability you can trigger to run a workflow directly from Visual Studio:
+
+![image](https://github.com/timheuer/GitHubActionsVS/assets/4821/f90697f8-a9e7-4d76-bcad-35d5c4a7ff58)
 
 #### Manually refresh
 You can manually refresh the view by clicking the refresh icon in the toolbar:
