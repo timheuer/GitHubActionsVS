@@ -71,6 +71,19 @@
                 </emoji:TextBlock>
             </StackPanel>
         </HierarchicalDataTemplate>
+        <DataTemplate x:Key="WorkflowItemTemplate">
+            <TextBlock Text="{Binding Name}" Tag="{Binding Id}">
+                <TextBlock.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="{x:Static resx:UIStrings.RUN_WORKFLOW}" Click="RunWorkflow_Click" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ContextMenu}}}">
+                            <MenuItem.Icon>
+                                <Image Source="pack://application:,,,/GitHubActionsVS;component/Resources/Run.png" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                    </ContextMenu>
+                </TextBlock.ContextMenu>
+            </TextBlock>
+        </DataTemplate>
         <DataTemplate x:Key="EnvironmentItemTemplate">
             <TextBlock Text="{Binding Name}"/>
         </DataTemplate>
@@ -93,6 +106,9 @@
                                 </Style>
                             </TreeView.Resources>
                         </TreeView>
+                    </Expander>
+                    <Expander Header="{x:Static resx:UIStrings.HEADER_WORKFLOWS}" FontWeight="Bold">
+                        <TreeView BorderThickness="0" FontWeight="Normal" PreviewMouseWheel="HandlePreviewMouseWheel" x:Name="tvWorkflows" ItemTemplate="{StaticResource WorkflowItemTemplate}"/>
                     </Expander>
                     <Expander Header="{x:Static resx:UIStrings.HEADER_SECRETS}" FontWeight="Bold">
                         <TreeView BorderThickness="0" PreviewMouseWheel="HandlePreviewMouseWheel" FontWeight="Normal">

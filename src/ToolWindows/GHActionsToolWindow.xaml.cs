@@ -149,6 +149,8 @@ public partial class GHActionsToolWindow : UserControl
             await RefreshSecretsAsync(client);
             // get environments
             await RefreshEnvironmentsAsync(client);
+            // get workflows
+            await RefreshWorkflowsAsync(client);
 
             // get current branch
             var runs = await client.Actions?.Workflows?.Runs?.List(_repoInfo.RepoOwner, _repoInfo.RepoName, new WorkflowRunsRequest() { Branch = _repoInfo.CurrentBranch }, new ApiOptions() { PageCount = 1, PageSize = maxRuns });
@@ -271,6 +273,11 @@ public partial class GHActionsToolWindow : UserControl
         tvEnvironments.ItemsSource = envList;
     }
 
+    private async Task RefreshWorkflowsAsync(GitHubClient client)
+    {
+        var workflows = await client.Actions?.Workflows?.List(_repoInfo.RepoOwner, _repoInfo.RepoName);
+        tvWorkflows.ItemsSource = workflows.Workflows;
+    }
     private async Task RefreshSecretsAsync(GitHubClient client)
     {
         var repoSecrets = await client.Repository?.Actions?.Secrets?.GetAll(_repoInfo.RepoOwner, _repoInfo.RepoName);
@@ -417,6 +424,28 @@ public partial class GHActionsToolWindow : UserControl
         {
             string logUrl = tvi.Tag.ToString();
             Process.Start(logUrl);
+        }
+    }
+
+    private void RunWorkflow_Click(object sender, RoutedEventArgs e)
+    {
+        MenuItem menuItem = (MenuItem)sender;
+        TextBlock tvi = GetParentTreeViewItem(menuItem);
+
+        // check the tag value to ensure it isn't null
+        if (tvi is not null && tvi.Tag is not null)
+        {
+            GitHubClient client = GetGitHubClient();
+            CreateWorkflowDispatch cwd = new CreateWorkflowDispatch(_repoInfo.CurrentBranch);
+
+            try
+            {
+                _ = client.Actions.Workflows.CreateDispatch(_repoInfo.RepoOwner, _repoInfo.RepoName, (long)tvi.Tag, cwd);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Failed to start workflow: {ex.Message}");
+            }
         }
     }
 }

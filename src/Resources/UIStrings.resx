@@ -173,6 +173,10 @@
     <value>Settings</value>
     <comment>Settings expander header</comment>
   </data>
+  <data name="HEADER_WORKFLOWS" xml:space="preserve">
+    <value>Workflows</value>
+    <comment>Header for workflow top-level node</comment>
+  </data>
   <data name="LABEL_NAME" xml:space="preserve">
     <value>Name:</value>
     <comment>Label for secret form for name</comment>
@@ -200,6 +204,10 @@
   <data name="NO_WORKFLOW_RUNS" xml:space="preserve">
     <value>No workflow runs found for query</value>
     <comment>For when no workload runs are found</comment>
+  </data>
+  <data name="RUN_WORKFLOW" xml:space="preserve">
+    <value>Run Workflow</value>
+    <comment>Menu for running a workflow</comment>
   </data>
   <data name="VIEW_LOG" xml:space="preserve">
     <value>View Log</value>

@@ -86,6 +86,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Resource Include="Resources\Run.png" />
     <Resource Include="Resources\OpenWebSite.png" />
     <Resource Include="Resources\codicon.ttf" />
     <Content Include="LICENSE">

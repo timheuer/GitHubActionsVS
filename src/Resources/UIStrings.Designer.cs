@@ -187,6 +187,15 @@ namespace GitHubActionsVS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Workflows.
+        /// </summary>
+        public static string HEADER_WORKFLOWS {
+            get {
+                return ResourceManager.GetString("HEADER_WORKFLOWS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Name:.
         /// </summary>
         public static string LABEL_NAME {
@@ -246,6 +255,15 @@ namespace GitHubActionsVS.Resources {
         public static string NO_WORKFLOW_RUNS {
             get {
                 return ResourceManager.GetString("NO_WORKFLOW_RUNS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Run Workflow.
+        /// </summary>
+        public static string RUN_WORKFLOW {
+            get {
+                return ResourceManager.GetString("RUN_WORKFLOW", resourceCulture);
             }
         }
         
