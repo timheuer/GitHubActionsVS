@@ -13,6 +13,7 @@ using Application = System.Windows.Application;
 using System.Windows.Media;
 using MessageBox = Community.VisualStudio.Toolkit.MessageBox;
 using resx = GitHubActionsVS.Resources.UIStrings;
+using Humanizer;
 
 namespace GitHubActionsVS;
 
