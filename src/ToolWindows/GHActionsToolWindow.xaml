@@ -115,6 +115,11 @@
                             <TreeViewItem Header="{x:Static resx:UIStrings.HEADER_ENVIRONMENTS}" HeaderTemplate="{StaticResource EnvironmentHeaderTemplate}" x:Name="tvEnvironments" ItemTemplate="{StaticResource EnvironmentItemTemplate}" />
                             <TreeViewItem Header="{x:Static resx:UIStrings.HEADER_SECRETS}" HeaderTemplate="{StaticResource SecretsHeaderTemplate}">
                                 <TreeViewItem x:Name="tvSecrets" HeaderTemplate="{StaticResource RepoSecretsHeaderTemplate}">
+                                    <TreeViewItem.Resources>
+                                        <Style TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource {x:Static shell:VsResourceKeys.ThemedDialogTreeViewItemStyleKey}}">
+                                            <EventSetter Event="MouseDoubleClick" Handler="Secret_MouseDoubleClick"/>
+                                        </Style>
+                                    </TreeViewItem.Resources>
                                     <TreeViewItem.ItemTemplate>
                                         <DataTemplate>
                                             <TextBlock Text="{Binding}">

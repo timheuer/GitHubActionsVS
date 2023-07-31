@@ -448,5 +448,21 @@ public partial class GHActionsToolWindow : UserControl
             }
         }
     }
+
+    private async void Secret_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+    {
+        // get the items Tag
+        if (sender is TreeViewItem item && item.Header is not null)
+        {
+            string header = item.Header.ToString();
+            string secretName = header.Substring(0, header.IndexOf(" ("));
+
+            if (secretName.ToLowerInvariant() != resx.NO_REPO_SECRETS.ToLowerInvariant() && secretName.ToLowerInvariant() != resx.HEADER_REPO_SECRETS.ToLowerInvariant())
+            {
+                await UpsertRepositorySecret(secretName);
+                e.Handled = true;
+            }
+        }
+    }
 }
 
