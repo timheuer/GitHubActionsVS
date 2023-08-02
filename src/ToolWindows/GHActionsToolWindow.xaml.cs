@@ -131,6 +131,7 @@ public partial class GHActionsToolWindow : UserControl
         tvEnvironments.ItemsSource = null;
         tvEnvironments.Header = resx.HEADER_ENVIRONMENTS;
         tvCurrentBranch.ItemsSource = null;
+        tvWorkflows.ItemsSource = null;
         CurrentBranchExpander.IsExpanded = false;
     }
 
