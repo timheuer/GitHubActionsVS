@@ -1,13 +1,6 @@
 name: "Publish"
 
-on:
-  workflow_dispatch:
-    branches:
-      - main
-    paths-ignore:
-      - '**/*.md'
-      - '**/*.gitignore'
-      - '**/*.gitattributes'
+on: workflow_dispatch
       
 jobs:
   build:
