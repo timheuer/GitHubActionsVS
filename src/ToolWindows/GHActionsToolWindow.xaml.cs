@@ -172,7 +172,9 @@ public partial class GHActionsToolWindow : UserControl
                         Name = run.Name,
                         LogDate = run.UpdatedAt,
                         Id = run.Id.ToString(),
-                        RunNumber = run.RunNumber.ToString()
+                        RunNumber = run.RunNumber.ToString(),
+                        TriggerEvent = run.Event,
+                        TriggerLogin = run.TriggeringActor.Login
                     };
 
                     if (refreshPending)
@@ -463,6 +465,23 @@ public partial class GHActionsToolWindow : UserControl
             {
                 await UpsertRepositorySecret(secretName);
                 e.Handled = true;
+            }
+        }
+    }
+
+    private void CancelRun_Click(object sender, RoutedEventArgs e)
+    {
+        MenuItem menuItem = (MenuItem)sender;
+        TextBlock tvi = GetParentTreeViewItem(menuItem);
+
+        // check the tag value to ensure it isn't null
+        if (tvi is not null && tvi.DataContext is not null)
+        {
+            var run = tvi.DataContext as BaseWorkflowType;
+            if (run is not null && run.Id is not null && !ConclusionFilter.IsFinished(run.Conclusion))
+            {
+                GitHubClient client = GetGitHubClient();
+                _ = client.Actions.Workflows.Runs.Cancel(_repoInfo.RepoOwner, _repoInfo.RepoName, Int64.Parse(run.Id));
             }
         }
     }

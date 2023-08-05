@@ -133,6 +133,10 @@
     <value>Update</value>
     <comment>Button text for update</comment>
   </data>
+  <data name="CANCEL_RUN" xml:space="preserve">
+    <value>Cancel Run</value>
+    <comment>Menu for cancelling a run</comment>
+  </data>
   <data name="CONFIRM_DELETE" xml:space="preserve">
     <value>Are you sure you want to delete this secret?</value>
     <comment>Question for deleting an item</comment>
@@ -208,6 +212,14 @@
   <data name="RUN_WORKFLOW" xml:space="preserve">
     <value>Run Workflow</value>
     <comment>Menu for running a workflow</comment>
+  </data>
+  <data name="TRIGGERED_BY" xml:space="preserve">
+    <value> by </value>
+    <comment>Message separating event and actor - requries spaces</comment>
+  </data>
+  <data name="TRIGGERED_VIA" xml:space="preserve">
+    <value>Triggered via </value>
+    <comment>Message starting the trigger sentence</comment>
   </data>
   <data name="VIEW_LOG" xml:space="preserve">
     <value>View Log</value>

@@ -97,6 +97,15 @@ namespace GitHubActionsVS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cancel Run.
+        /// </summary>
+        public static string CANCEL_RUN {
+            get {
+                return ResourceManager.GetString("CANCEL_RUN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Are you sure you want to delete this secret?.
         /// </summary>
         public static string CONFIRM_DELETE {
@@ -264,6 +273,24 @@ namespace GitHubActionsVS.Resources {
         public static string RUN_WORKFLOW {
             get {
                 return ResourceManager.GetString("RUN_WORKFLOW", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  by .
+        /// </summary>
+        public static string TRIGGERED_BY {
+            get {
+                return ResourceManager.GetString("TRIGGERED_BY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Triggered via .
+        /// </summary>
+        public static string TRIGGERED_VIA {
+            get {
+                return ResourceManager.GetString("TRIGGERED_VIA", resourceCulture);
             }
         }
         

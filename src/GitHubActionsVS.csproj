@@ -50,6 +50,7 @@
     <Compile Include="Converters\ConclusionColorConverter.cs" />
     <Compile Include="Converters\ConclusionIconConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
+    <Compile Include="Helpers\ConclusionFilter.cs" />
     <Compile Include="Helpers\CredentialManager.cs" />
     <Compile Include="Helpers\RepoInfo.cs" />
     <Compile Include="Models\BaseWorkflowType.cs" />
@@ -104,6 +105,7 @@
     <Resource Include="Resources\AddItem.png" />
     <Resource Include="Resources\Delete.png" />
     <Resource Include="Resources\Edit.png" />
+    <Resource Include="Resources\CancelBuild.png" />
     <Content Include="Resources\Icon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>

@@ -22,6 +22,8 @@
         <ivc:ConclusionIconConverter x:Key="ConclusionIconConverter" />
         <ivc:ConclusionColorConverter x:Key="ConclusionColorConverter" />
         <ivc:NullToVisibilityConverter x:Key="NullVisibilityConverter" />
+        <ivc:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <ivc:NullToBooleanConverter x:Key="NullToBooleanConverter" />
         <Style TargetType="{x:Type Expander}">
             <Setter Property="toolkit:Themes.UseVsTheme" Value="True" />
         </Style>
@@ -59,11 +61,29 @@
                    Foreground="{Binding Path=Conclusion, Converter={StaticResource ConclusionColorConverter}}"
                    Text="{Binding Path=Conclusion, Converter={StaticResource ConclusionIconConverter}}"/>
                 <emoji:TextBlock Text="{Binding DisplayName}" VerticalAlignment="Bottom" Tag="{Binding Url}">
+                    <emoji:TextBlock.ToolTip>
+                        <ToolTip Visibility="{Binding TriggerEvent, Converter={StaticResource NullVisibilityConverter}}">
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock FontWeight="Bold" Text="{Binding Conclusion}"/>
+                                <TextBlock>
+                                    <Run Text="{x:Static resx:UIStrings.TRIGGERED_VIA}"/>
+                                    <Run FontWeight="Bold" Text="{Binding TriggerEvent}"/>
+                                    <Run Text="{x:Static resx:UIStrings.TRIGGERED_BY}"/>
+                                    <Run FontWeight="Bold" Text="{Binding TriggerLogin}"/>
+                                </TextBlock>
+                            </StackPanel>
+                        </ToolTip>
+                    </emoji:TextBlock.ToolTip>
                     <TextBlock.ContextMenu>
-                        <ContextMenu Visibility="{Binding Url, Converter={StaticResource NullVisibilityConverter}}">
-                            <MenuItem Header="{x:Static resx:UIStrings.VIEW_LOG}" Click="ViewLog_Click" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ContextMenu}}}">
+                        <ContextMenu Visibility="{Binding HasActions, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <MenuItem IsEnabled="{Binding Url, Converter={StaticResource NullToBooleanConverter}}" Header="{x:Static resx:UIStrings.VIEW_LOG}" Click="ViewLog_Click" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ContextMenu}}}">
                                 <MenuItem.Icon>
                                     <Image Source="pack://application:,,,/GitHubActionsVS;component/Resources/OpenWebSite.png" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem IsEnabled="{Binding Cancellable}" Click="CancelRun_Click" Header="{x:Static resx:UIStrings.CANCEL_RUN}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ContextMenu}}}">
+                                <MenuItem.Icon>
+                                    <Image Source="pack://application:,,,/GitHubActionsVS;component/Resources/CancelBuild.png" />
                                 </MenuItem.Icon>
                             </MenuItem>
                         </ContextMenu>
