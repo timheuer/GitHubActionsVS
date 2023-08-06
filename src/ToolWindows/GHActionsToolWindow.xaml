@@ -96,7 +96,7 @@
             </StackPanel>
         </HierarchicalDataTemplate>
         <DataTemplate x:Key="WorkflowItemTemplate">
-            <TextBlock Text="{Binding Name}" Tag="{Binding Id}">
+            <TextBlock Text="{Binding Name}" Tag="{Binding Id}" ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}">
                 <TextBlock.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="{x:Static resx:UIStrings.RUN_WORKFLOW}" Click="RunWorkflow_Click" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ContextMenu}}}">
@@ -109,7 +109,7 @@
             </TextBlock>
         </DataTemplate>
         <DataTemplate x:Key="EnvironmentItemTemplate">
-            <TextBlock Text="{Binding Name}"/>
+            <TextBlock Text="{Binding Name}" ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}"/>
         </DataTemplate>
     </UserControl.Resources>
     <Grid VerticalAlignment="Stretch">
@@ -122,7 +122,7 @@
             <TextBlock HorizontalAlignment="Center" x:Name="MessageArea" />
             <ScrollViewer VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Margin="5,5,0,0" x:Name="ActionsInfoPanel">
                 <StackPanel Orientation="Vertical">
-                    <Expander Header="{x:Static resx:UIStrings.HEADER_CURRENT_BRANCH}" x:Name="CurrentBranchExpander" FontWeight="Bold">
+                    <Expander Header="{x:Static resx:UIStrings.HEADER_CURRENT_BRANCH}" x:Name="CurrentBranchExpander" FontWeight="Bold" ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Header}">
                         <TreeView BorderThickness="0" FontWeight="Normal" PreviewMouseWheel="HandlePreviewMouseWheel" x:Name="tvCurrentBranch" ItemTemplate="{StaticResource TreeViewRunNodeDataTemplate}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
                             <TreeView.Resources>
                                 <Style TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource {x:Static shell:VsResourceKeys.ThemedDialogTreeViewItemStyleKey}}">
@@ -131,14 +131,14 @@
                             </TreeView.Resources>
                         </TreeView>
                     </Expander>
-                    <Expander Header="{x:Static resx:UIStrings.HEADER_WORKFLOWS}" FontWeight="Bold">
+                    <Expander Header="{x:Static resx:UIStrings.HEADER_WORKFLOWS}" FontWeight="Bold" ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Header}">
                         <TreeView BorderThickness="0" FontWeight="Normal" PreviewMouseWheel="HandlePreviewMouseWheel" x:Name="tvWorkflows" ItemTemplate="{StaticResource WorkflowItemTemplate}"/>
                     </Expander>
-                    <Expander Header="{x:Static resx:UIStrings.HEADER_SECRETS}" FontWeight="Bold">
+                    <Expander Header="{x:Static resx:UIStrings.HEADER_SECRETS}" FontWeight="Bold" ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Header}">
                         <TreeView BorderThickness="0" PreviewMouseWheel="HandlePreviewMouseWheel" FontWeight="Normal">
-                            <TreeViewItem Header="{x:Static resx:UIStrings.HEADER_ENVIRONMENTS}" HeaderTemplate="{StaticResource EnvironmentHeaderTemplate}" x:Name="tvEnvironments" ItemTemplate="{StaticResource EnvironmentItemTemplate}" />
-                            <TreeViewItem Header="{x:Static resx:UIStrings.HEADER_SECRETS}" HeaderTemplate="{StaticResource SecretsHeaderTemplate}">
-                                <TreeViewItem x:Name="tvSecrets" HeaderTemplate="{StaticResource RepoSecretsHeaderTemplate}">
+                            <TreeViewItem ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Header}" Header="{x:Static resx:UIStrings.HEADER_ENVIRONMENTS}" HeaderTemplate="{StaticResource EnvironmentHeaderTemplate}" x:Name="tvEnvironments" ItemTemplate="{StaticResource EnvironmentItemTemplate}" />
+                            <TreeViewItem ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Header}" Header="{x:Static resx:UIStrings.HEADER_SECRETS}" HeaderTemplate="{StaticResource SecretsHeaderTemplate}">
+                                <TreeViewItem ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Header}" x:Name="tvSecrets" HeaderTemplate="{StaticResource RepoSecretsHeaderTemplate}">
                                     <TreeViewItem.Resources>
                                         <Style TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource {x:Static shell:VsResourceKeys.ThemedDialogTreeViewItemStyleKey}}">
                                             <EventSetter Event="MouseDoubleClick" Handler="Secret_MouseDoubleClick"/>
@@ -146,7 +146,7 @@
                                     </TreeViewItem.Resources>
                                     <TreeViewItem.ItemTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding}">
+                                            <TextBlock Text="{Binding}" ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}">
                                                 <TextBlock.ContextMenu>
                                                     <ContextMenu>
                                                         <MenuItem Header="{x:Static resx:UIStrings.EDIT_SECRET}" Click="EditSecret_Click" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ContextMenu}}}">
