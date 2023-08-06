@@ -277,7 +277,7 @@ namespace GitHubActionsVS.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to  by .
+        ///   Looks up a localized string similar to by.
         /// </summary>
         public static string TRIGGERED_BY {
             get {
@@ -286,7 +286,7 @@ namespace GitHubActionsVS.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Triggered via .
+        ///   Looks up a localized string similar to Triggered via.
         /// </summary>
         public static string TRIGGERED_VIA {
             get {

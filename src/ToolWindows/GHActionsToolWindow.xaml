@@ -64,7 +64,11 @@
                     <emoji:TextBlock.ToolTip>
                         <ToolTip Visibility="{Binding TriggerEvent, Converter={StaticResource NullVisibilityConverter}}">
                             <StackPanel Orientation="Vertical">
-                                <TextBlock FontWeight="Bold" Text="{Binding Conclusion}"/>
+                                <TextBlock>
+                                    <Run FontWeight="Bold" Text="{Binding Conclusion}"/>
+                                    <Run Text="in"/>
+                                    <Run FontWeight="Bold" Text="{Binding RunDuration}" />
+                                </TextBlock>
                                 <TextBlock>
                                     <Run Text="{x:Static resx:UIStrings.TRIGGERED_VIA}"/>
                                     <Run FontWeight="Bold" Text="{Binding TriggerEvent}"/>

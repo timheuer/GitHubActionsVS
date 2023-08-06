@@ -168,13 +168,14 @@ public partial class GHActionsToolWindow : UserControl
                 {
                     SimpleRun simpleRun = new()
                     {
-                        Conclusion = run.Conclusion is not null ? run.Conclusion.Value.StringValue : run.Status.StringValue,
+                        Conclusion = run.Conclusion is not null ? run.Conclusion.Value.StringValue.Humanize(LetterCasing.Title) : run.Status.StringValue.Humanize(LetterCasing.Title),
                         Name = run.Name,
                         LogDate = run.UpdatedAt,
                         Id = run.Id.ToString(),
                         RunNumber = run.RunNumber.ToString(),
                         TriggerEvent = run.Event,
-                        TriggerLogin = run.TriggeringActor.Login
+                        TriggerLogin = run.TriggeringActor.Login,
+                        RunDuration = (run.UpdatedAt - run.RunStartedAt).Humanize(2)
                     };
 
                     if (refreshPending)

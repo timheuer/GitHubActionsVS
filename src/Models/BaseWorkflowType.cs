@@ -12,6 +12,7 @@ public abstract class BaseWorkflowType
     public string Id { get; set; }
     public string TriggerEvent { get; set; }
     public string TriggerLogin { get; set; }
+    public string RunDuration { get; set; }
 
     public bool HasActions
     {

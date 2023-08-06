@@ -214,11 +214,11 @@
     <comment>Menu for running a workflow</comment>
   </data>
   <data name="TRIGGERED_BY" xml:space="preserve">
-    <value> by </value>
+    <value>by</value>
     <comment>Message separating event and actor - requries spaces</comment>
   </data>
   <data name="TRIGGERED_VIA" xml:space="preserve">
-    <value>Triggered via </value>
+    <value>Triggered via</value>
     <comment>Message starting the trigger sentence</comment>
   </data>
   <data name="VIEW_LOG" xml:space="preserve">
