@@ -27,7 +27,7 @@ public partial class GHActionsToolWindow : UserControl
     private int maxRuns = 10;
     private bool refreshPending = false;
     private int refreshInterval = 5;
-
+    OutputWindowPane _pane;
 
     public GHActionsToolWindow(ToolWindowMessenger toolWindowMessenger)
     {
@@ -68,6 +68,11 @@ public partial class GHActionsToolWindow : UserControl
 
     public async Task GetRepoInfoAsync()
     {
+        if (_pane is null)
+        {
+            _pane = await VS.Windows.CreateOutputWindowPaneAsync("GitHub Actions for VS");
+        }
+
         ClearTreeViews();
         _repoInfo.RepoOwner = null;
         _repoInfo.RepoName = null;
@@ -80,10 +85,13 @@ public partial class GHActionsToolWindow : UserControl
         refreshInterval = generalSettings.RefreshInterval;
         refreshPending = generalSettings.RefreshActiveJobs;
 
+        await _pane.WriteLineAsync("Extension settings retrieved and applied");
+
         // find the git folder
         var solution = await VS.Solutions.GetCurrentSolutionAsync();
         if (solution is null)
         {
+            await _pane.WriteLineAsync("No solution found");
             Debug.WriteLine("No solution found");
             ShowInfoMessage(resx.NO_PROJ_LOADED);
             return;
@@ -94,6 +102,7 @@ public partial class GHActionsToolWindow : UserControl
 
         if (string.IsNullOrWhiteSpace(gitPath))
         {
+            await _pane.WriteLineAsync("No git repo found");
             Debug.WriteLine("No git repo found");
             ShowInfoMessage(resx.NO_GIT_REPO);
         }
@@ -107,6 +116,7 @@ public partial class GHActionsToolWindow : UserControl
             }
             else
             {
+                await _pane.WriteLineAsync("Not a GitHub repo");
                 Debug.WriteLine("Not a GitHub repo");
                 ShowInfoMessage(resx.GIT_NOT_GITHUB);
             }
@@ -154,6 +164,7 @@ public partial class GHActionsToolWindow : UserControl
             // get workflows
             await RefreshWorkflowsAsync(client);
 
+            await _pane.WriteLineAsync("Loading Workflow Runs...");
             // get current branch
             var runs = await client.Actions?.Workflows?.Runs?.List(_repoInfo.RepoOwner, _repoInfo.RepoName, new WorkflowRunsRequest() { Branch = _repoInfo.CurrentBranch }, new ApiOptions() { PageCount = 1, PageSize = maxRuns });
 
@@ -161,6 +172,7 @@ public partial class GHActionsToolWindow : UserControl
 
             if (runs.TotalCount > 0)
             {
+                await _pane.WriteLineAsync($"Number of runs found: {runs.TotalCount}");
                 // creating simplified model of the GH info for the treeview
 
                 // iterate throught the runs
@@ -255,25 +267,35 @@ public partial class GHActionsToolWindow : UserControl
 
     private async Task RefreshEnvironmentsAsync(GitHubClient client)
     {
-        var repoEnvs = await client.Repository?.Environment?.GetAll(_repoInfo.RepoOwner, _repoInfo.RepoName);
         List<SimpleEnvironment> envList = new List<SimpleEnvironment>();
-        if (repoEnvs.TotalCount > 0)
+        await _pane.WriteLineAsync("Loading Environments...");
+        try
         {
-            tvEnvironments.Header = $"{resx.HEADER_ENVIRONMENTS} ({repoEnvs.TotalCount})";
-            foreach (var env in repoEnvs.Environments)
+            var repoEnvs = await client.Repository?.Environment?.GetAll(_repoInfo.RepoOwner, _repoInfo.RepoName);
+            
+            if (repoEnvs.TotalCount > 0)
             {
-                var envItem = new SimpleEnvironment
+                tvEnvironments.Header = $"{resx.HEADER_ENVIRONMENTS} ({repoEnvs.TotalCount})";
+                foreach (var env in repoEnvs.Environments)
                 {
-                    Name = env.Name,
-                    Url = env.HtmlUrl
-                };
+                    var envItem = new SimpleEnvironment
+                    {
+                        Name = env.Name,
+                        Url = env.HtmlUrl
+                    };
 
-                envList.Add(envItem);
+                    envList.Add(envItem);
+                }
+            }
+            else
+            {
+                envList.Add(new() { Name = resx.NO_ENV });
             }
         }
-        else
+        catch (Exception ex)
         {
-            envList.Add(new() {  Name = resx.NO_ENV});
+            envList.Add(new SimpleEnvironment() { Name = "Unable to retrieve Environments, please check logs" });
+            await ex.LogAsync();
         }
 
         tvEnvironments.ItemsSource = envList;
@@ -281,27 +303,48 @@ public partial class GHActionsToolWindow : UserControl
 
     private async Task RefreshWorkflowsAsync(GitHubClient client)
     {
-        var workflows = await client.Actions?.Workflows?.List(_repoInfo.RepoOwner, _repoInfo.RepoName);
-        tvWorkflows.ItemsSource = workflows.Workflows;
+        await _pane.WriteLineAsync("Loading Workflows...");
+        try
+        {
+            var workflows = await client.Actions?.Workflows?.List(_repoInfo.RepoOwner, _repoInfo.RepoName);
+            tvWorkflows.ItemsSource = workflows.Workflows;
+        }
+        catch (Exception ex)
+        {
+            await ex.LogAsync();
+        }
+
     }
     private async Task RefreshSecretsAsync(GitHubClient client)
     {
-        var repoSecrets = await client.Repository?.Actions?.Secrets?.GetAll(_repoInfo.RepoOwner, _repoInfo.RepoName);
         List<string> secretList = new();
-        if (repoSecrets.TotalCount > 0)
+        await _pane.WriteLineAsync("Loading Secrets...");
+        try
         {
-            tvSecrets.Header = $"{resx.HEADER_REPO_SECRETS} ({repoSecrets.TotalCount})";
-            foreach (var secret in repoSecrets.Secrets)
+            var repoSecrets = await client.Repository?.Actions?.Secrets?.GetAll(_repoInfo.RepoOwner, _repoInfo.RepoName);
+
+            if (repoSecrets.TotalCount > 0)
             {
-                var updatedOrCreatedAt = secret.UpdatedAt.GetValueOrDefault(secret.CreatedAt);
-                secretList.Add($"{secret.Name} ({updatedOrCreatedAt:g})");
+                await _pane.WriteLineAsync($"Number of Repository Secrets found: {repoSecrets.TotalCount}");
+                tvSecrets.Header = $"{resx.HEADER_REPO_SECRETS} ({repoSecrets.TotalCount})";
+                foreach (var secret in repoSecrets.Secrets)
+                {
+                    var updatedOrCreatedAt = secret.UpdatedAt.GetValueOrDefault(secret.CreatedAt);
+                    secretList.Add($"{secret.Name} ({updatedOrCreatedAt:g})");
+                }
+            }
+            else
+            {
+                tvSecrets.Header = resx.HEADER_REPO_SECRETS;
+                secretList.Add(resx.NO_REPO_SECRETS);
             }
         }
-        else
+        catch (Exception ex)
         {
-            tvSecrets.Header = resx.HEADER_REPO_SECRETS;
-            secretList.Add(resx.NO_REPO_SECRETS);
+            secretList.Add("Unable to retrieve Secrets, please check logs");
+            await ex.LogAsync();
         }
+
         tvSecrets.ItemsSource = secretList;
     }
 
