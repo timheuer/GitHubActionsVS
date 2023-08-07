@@ -245,6 +245,7 @@ public partial class GHActionsToolWindow : UserControl
         catch (Exception ex)
         {
             Console.WriteLine(ex);
+            await ex.LogAsync();
         }
 
         CurrentBranchExpander.IsExpanded = true;
