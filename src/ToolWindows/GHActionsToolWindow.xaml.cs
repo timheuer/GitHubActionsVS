@@ -254,9 +254,13 @@ public partial class GHActionsToolWindow : UserControl
 
             tvCurrentBranch.ItemsSource = runsList;
         }
+        catch (ApiException ex)
+        {
+            await _pane.WriteLineAsync($"Error retrieving Workflow Runs: {ex.Message}:{ex.StatusCode}");
+            await ex.LogAsync();
+        }
         catch (Exception ex)
         {
-            Console.WriteLine(ex);
             await ex.LogAsync();
         }
 
@@ -292,6 +296,14 @@ public partial class GHActionsToolWindow : UserControl
                 envList.Add(new() { Name = resx.NO_ENV });
             }
         }
+        catch (ApiException ex)
+        {
+            if (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized || ex.StatusCode == System.Net.HttpStatusCode.Forbidden)
+            {
+                envList.Add(new SimpleEnvironment() { Name = "Insufficient permissions to retrieve Secrets" });
+                await ex.LogAsync(ex.Message);
+            }
+        }
         catch (Exception ex)
         {
             envList.Add(new SimpleEnvironment() { Name = "Unable to retrieve Environments, please check logs" });
@@ -308,6 +320,11 @@ public partial class GHActionsToolWindow : UserControl
         {
             var workflows = await client.Actions?.Workflows?.List(_repoInfo.RepoOwner, _repoInfo.RepoName);
             tvWorkflows.ItemsSource = workflows.Workflows;
+        }
+        catch (ApiException ex)
+        {
+            await _pane.WriteLineAsync($"Error retrieving Workflows: {ex.Message}:{ex.StatusCode}");
+            await ex.LogAsync();
         }
         catch (Exception ex)
         {
@@ -339,8 +356,18 @@ public partial class GHActionsToolWindow : UserControl
                 secretList.Add(resx.NO_REPO_SECRETS);
             }
         }
+        catch (ApiException ex)
+        {
+            if (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized || ex.StatusCode == System.Net.HttpStatusCode.Forbidden)
+            {
+                await _pane.WriteLineAsync($"Error retrieving Secrets: {ex.Message}:{ex.StatusCode}");
+                secretList.Add("Insufficient permissions to retrieve Secrets");
+                await ex.LogAsync(ex.Message);
+            }
+        }
         catch (Exception ex)
         {
+            // check to see if a permission thing
             secretList.Add("Unable to retrieve Secrets, please check logs");
             await ex.LogAsync();
         }
