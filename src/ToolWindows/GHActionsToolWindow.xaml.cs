@@ -112,6 +112,7 @@ public partial class GHActionsToolWindow : UserControl
             if (_repoInfo.IsGitHub)
             {
                 Debug.WriteLine($"GitHub repo: {_repoInfo.RepoOwner}/{_repoInfo.RepoName}");
+                await _pane.WriteLineAsync($"Found repo for {gitPath} at {_repoInfo.RepoOwner}/{_repoInfo.RepoName}");
                 await LoadDataAsync();
             }
             else
@@ -300,7 +301,7 @@ public partial class GHActionsToolWindow : UserControl
         {
             if (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized || ex.StatusCode == System.Net.HttpStatusCode.Forbidden)
             {
-                envList.Add(new SimpleEnvironment() { Name = "Insufficient permissions to retrieve Secrets" });
+                envList.Add(new SimpleEnvironment() { Name = resx.INSUFFICIENT_SECRET_PERMS });
                 await ex.LogAsync(ex.Message);
             }
         }

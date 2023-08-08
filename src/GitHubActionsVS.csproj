@@ -146,6 +146,11 @@
     <PackageReference Include="CredentialManagement">
       <Version>1.0.2</Version>
     </PackageReference>
+    <PackageReference Include="DotNet.ReproducibleBuilds">
+      <Version>1.1.1</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="Emoji.Wpf">
       <Version>0.3.4</Version>
     </PackageReference>
