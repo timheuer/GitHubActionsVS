@@ -205,6 +205,15 @@ namespace GitHubActionsVS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Insufficient permissions to retrieve Secrets.
+        /// </summary>
+        public static string INSUFFICIENT_SECRET_PERMS {
+            get {
+                return ResourceManager.GetString("INSUFFICIENT_SECRET_PERMS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Name:.
         /// </summary>
         public static string LABEL_NAME {

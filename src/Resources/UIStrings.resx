@@ -181,6 +181,10 @@
     <value>Workflows</value>
     <comment>Header for workflow top-level node</comment>
   </data>
+  <data name="INSUFFICIENT_SECRET_PERMS" xml:space="preserve">
+    <value>Insufficient permissions to retrieve Secrets</value>
+    <comment>Error for when you don't have perms</comment>
+  </data>
   <data name="LABEL_NAME" xml:space="preserve">
     <value>Name:</value>
     <comment>Label for secret form for name</comment>

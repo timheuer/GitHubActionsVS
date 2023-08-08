@@ -361,7 +361,7 @@ public partial class GHActionsToolWindow : UserControl
             if (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized || ex.StatusCode == System.Net.HttpStatusCode.Forbidden)
             {
                 await _pane.WriteLineAsync($"Error retrieving Secrets: {ex.Message}:{ex.StatusCode}");
-                secretList.Add("Insufficient permissions to retrieve Secrets");
+                secretList.Add(resx.INSUFFICIENT_SECRET_PERMS);
                 await ex.LogAsync(ex.Message);
             }
         }
@@ -410,14 +410,29 @@ public partial class GHActionsToolWindow : UserControl
 
     private async void AddSecret_Click(object sender, RoutedEventArgs e)
     {
-        await UpsertRepositorySecret(string.Empty);
+        try
+        {
+            await UpsertRepositorySecret(string.Empty);
+        }
+        catch (ApiException ex)
+        {
+            if (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized || ex.StatusCode == System.Net.HttpStatusCode.Forbidden)
+            {
+                await _pane.WriteLineAsync($"Error saving Secret: {ex.Message}:{ex.StatusCode}");
+                await ex.LogAsync(ex.Message);
+            }
+        }
+        catch (Exception ex)
+        {
+            await ex.LogAsync();
+        }
     }
 
     private async void EditSecret_Click(object sender, RoutedEventArgs e)
     {
         MenuItem menuItem = (MenuItem)sender;
         TextBlock tvi = GetParentTreeViewItem(menuItem);
-        if (tvi is not null && tvi.Text.ToLowerInvariant() != resx.NO_REPO_SECRETS.ToLowerInvariant()) // yes a hack
+        if (tvi is not null && !tvi.Text.ToLowerInvariant().Contains(" (")) // yes a hack
         {
             string header = tvi.Text.ToString();
             string secretName = header.Substring(0, header.IndexOf(" ("));
@@ -444,7 +459,7 @@ public partial class GHActionsToolWindow : UserControl
         MenuItem menuItem = (MenuItem)sender;
         TextBlock tvi = GetParentTreeViewItem(menuItem);
 
-        if (tvi is not null && tvi.Text.ToLowerInvariant() != resx.NO_REPO_SECRETS.ToLowerInvariant()) // yes a hack
+        if (tvi is not null && !tvi.Text.ToLowerInvariant().Contains(" (")) // yes a hack
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             // confirm the delete first
@@ -528,7 +543,7 @@ public partial class GHActionsToolWindow : UserControl
     private async void Secret_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
         // get the items Tag
-        if (sender is TreeViewItem item && item.Header is not null)
+        if (sender is TreeViewItem item && item.Header is not null && item.Header.ToString().ToLowerInvariant().Contains(" ("))
         {
             string header = item.Header.ToString();
             string secretName = header.Substring(0, header.IndexOf(" ("));
