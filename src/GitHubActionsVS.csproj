@@ -106,6 +106,7 @@
     <Resource Include="Resources\Delete.png" />
     <Resource Include="Resources\Edit.png" />
     <Resource Include="Resources\CancelBuild.png" />
+    <Resource Include="Resources\GitHub.png" />
     <Content Include="Resources\Icon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>

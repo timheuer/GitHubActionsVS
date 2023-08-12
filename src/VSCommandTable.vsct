@@ -55,7 +55,8 @@
 			</Button>
 			<Button guid="GitHubActionsVS" id="GotoRepoCommand" priority="0x0002" type="Button">
 				<Parent guid="GitHubActionsVS" id="TWindowToolbarGroup"/>
-				<Icon guid="ImageCatalogGuid" id="WebURL"/>
+				<!-- using the ID for GitHub because knownimageid is not working -->
+				<Icon guid="ImageCatalogGuid" id="3809"/>
 				<CommandFlag>IconIsMoniker</CommandFlag>
 				<Strings>
 					<ButtonText>Open Repo in Browser</ButtonText>
