@@ -58,8 +58,15 @@
         <HierarchicalDataTemplate x:Key="TreeViewRunNodeDataTemplate" ItemsSource="{Binding Jobs}">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
                 <TextBlock VerticalAlignment="Center" FontFamily="{StaticResource CodiconFont}" 
-                   Foreground="{Binding Path=Conclusion, Converter={StaticResource ConclusionColorConverter}}"
-                   Text="{Binding Path=Conclusion, Converter={StaticResource ConclusionIconConverter}}"/>
+                           Text="{Binding Conclusion, Converter={StaticResource ConclusionIconConverter}}"
+                           Tag="{Binding ElementName=MessageArea, Path=Foreground}">
+                    <TextBlock.Foreground>
+                        <MultiBinding Converter="{StaticResource ConclusionColorConverter}">
+                            <Binding Path="Conclusion" />
+                            <Binding Path="Tag" RelativeSource="{RelativeSource Self}" />
+                        </MultiBinding>
+                    </TextBlock.Foreground>
+                </TextBlock>
                 <emoji:TextBlock Text="{Binding DisplayName}" VerticalAlignment="Bottom" Tag="{Binding Url}">
                     <emoji:TextBlock.ToolTip>
                         <ToolTip Visibility="{Binding TriggerEvent, Converter={StaticResource NullVisibilityConverter}}">
@@ -119,7 +126,7 @@
         </Grid.RowDefinitions>
         <ProgressBar x:Name="refreshProgress" Height="5" Grid.Row="0" Visibility="Hidden"/>
         <Grid Grid.Row="1">
-            <TextBlock HorizontalAlignment="Center" x:Name="MessageArea" />
+            <TextBlock HorizontalAlignment="Center" x:Name="MessageArea" TextWrapping="Wrap" Margin="20" />
             <ScrollViewer VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Margin="5,5,0,0" x:Name="ActionsInfoPanel">
                 <StackPanel Orientation="Vertical">
                     <Expander Header="{x:Static resx:UIStrings.HEADER_CURRENT_BRANCH}" x:Name="CurrentBranchExpander" FontWeight="Bold" ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Header}">

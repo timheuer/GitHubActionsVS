@@ -198,7 +198,7 @@
     <comment>For when no environments defined</comment>
   </data>
   <data name="NO_GIT_REPO" xml:space="preserve">
-    <value>No git repo found</value>
+    <value>No GitHub repositories found. Please open a folder that contains a GitHub repository.</value>
     <comment>For when no git repo is found</comment>
   </data>
   <data name="NO_PROJ_LOADED" xml:space="preserve">

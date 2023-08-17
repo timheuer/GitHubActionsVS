@@ -11,7 +11,7 @@ public class ConclusionFilter
     {
         return conclusion.ToLower() switch
         {
-            "pending" or "waiting" or "queued" or "in_progress" or "inprogress" or "requested" => false,
+            "pending" or "waiting" or "queued" or "in_progress" or "inprogress" or "requested" or null => false,
             _ => true,
         };
     }

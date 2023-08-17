@@ -241,7 +241,7 @@ namespace GitHubActionsVS.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No git repo found.
+        ///   Looks up a localized string similar to No GitHub repositories found. Please open a folder that contains a GitHub repository..
         /// </summary>
         public static string NO_GIT_REPO {
             get {
