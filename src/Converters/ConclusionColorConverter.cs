@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-using System.Globalization;
-using System.Windows;
+﻿using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media;
 

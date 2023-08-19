@@ -142,7 +142,7 @@ namespace GitHubActionsVS.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Repo found, but not a github.com.
+        ///   Looks up a localized string similar to Repository found, but not identified as a GitHub repo.  Please open a folder that contains a GitHub repository..
         /// </summary>
         public static string GIT_NOT_GITHUB {
             get {

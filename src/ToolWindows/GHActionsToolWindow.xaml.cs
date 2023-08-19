@@ -48,10 +48,16 @@ public partial class GHActionsToolWindow : UserControl
             {
                 MessageCommand.Refresh => GetRepoInfoAsync(),
                 MessageCommand.GotoRepo => GotoRepoAsync(),
+                MessageCommand.OpenSettings => OpenSettingsAsync(),
 
                 _ => Task.CompletedTask
             });
         }).FireAndForget();
+    }
+
+    private async Task OpenSettingsAsync()
+    {
+        await VS.Settings.OpenAsync(typeof(OptionsProvider.ExtensionOptionsOptions));
     }
 
     private Task GotoRepoAsync()

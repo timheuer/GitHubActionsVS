@@ -46,6 +46,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Commands\GotoRepoCommand.cs" />
+    <Compile Include="Commands\OpenSettingsCommand.cs" />
     <Compile Include="Commands\RefreshRepoCommand.cs" />
     <Compile Include="Converters\ConclusionColorConverter.cs" />
     <Compile Include="Converters\ConclusionIconConverter.cs" />
@@ -184,6 +185,7 @@
     <EmbeddedResource Include="Resources\UIStrings.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>UIStrings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

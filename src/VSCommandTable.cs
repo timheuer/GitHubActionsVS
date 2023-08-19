@@ -26,5 +26,6 @@ namespace GitHubActionsVS
         public const int TWindowToolbarGroup = 0x1050;
         public const int RefreshRepoCommand = 0x0111;
         public const int GotoRepoCommand = 0x0112;
+        public const int OpenSettingsCommand = 0x0113;
     }
 }

@@ -63,6 +63,15 @@
 					<LocCanonicalName>.View.GotoRepo</LocCanonicalName>
 				</Strings>
 			</Button>
+			<Button guid="GitHubActionsVS" id="OpenSettingsCommand" priority="0x0003" type="Button">
+				<Parent guid="GitHubActionsVS" id="TWindowToolbarGroup"/>
+				<Icon guid="ImageCatalogGuid" id="Settings"/>
+				<CommandFlag>IconIsMoniker</CommandFlag>
+				<Strings>
+					<ButtonText>Open Settings</ButtonText>
+					<LocCanonicalName>.View.OpenSettings</LocCanonicalName>
+				</Strings>
+			</Button>
 		</Buttons>
 	</Commands>
 
@@ -74,6 +83,7 @@
 			<IDSymbol name="TWindowToolbarGroup" value="0x1050" />
 			<IDSymbol name="RefreshRepoCommand" value="0x0111" />
 			<IDSymbol name="GotoRepoCommand" value="0x0112" />
+			<IDSymbol name="OpenSettingsCommand" value="0x0113" />
 		</GuidSymbol>
 	</Symbols>
 </CommandTable>

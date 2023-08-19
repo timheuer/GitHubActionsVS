@@ -154,7 +154,7 @@
     <comment>Menu for editing a secret</comment>
   </data>
   <data name="GIT_NOT_GITHUB" xml:space="preserve">
-    <value>Repo found, but not a github.com</value>
+    <value>Repository found, but not identified as a GitHub repo.  Please open a folder that contains a GitHub repository.</value>
     <comment>For when the git repo is not github.com</comment>
   </data>
   <data name="HEADER_CURRENT_BRANCH" xml:space="preserve">
