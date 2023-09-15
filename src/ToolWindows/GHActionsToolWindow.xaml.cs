@@ -539,6 +539,7 @@ public partial class GHActionsToolWindow : UserControl
             try
             {
                 _ = client.Actions.Workflows.CreateDispatch(_repoInfo.RepoOwner, _repoInfo.RepoName, (long)tvi.Tag, cwd);
+                VS.StatusBar.ShowMessageAsync("Workflow run requested...").FireAndForget();
             }
             catch (Exception ex)
             {
