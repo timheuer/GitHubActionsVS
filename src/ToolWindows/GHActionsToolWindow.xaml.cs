@@ -439,7 +439,7 @@ public partial class GHActionsToolWindow : UserControl
     {
         MenuItem menuItem = (MenuItem)sender;
         TextBlock tvi = GetParentTreeViewItem(menuItem);
-        if (tvi is not null && !tvi.Text.ToLowerInvariant().Contains(" (")) // yes a hack
+        if (tvi is not null && tvi.Text.ToLowerInvariant().Contains(" (")) // yes a hack
         {
             string header = tvi.Text.ToString();
             string secretName = header.Substring(0, header.IndexOf(" ("));
@@ -466,7 +466,7 @@ public partial class GHActionsToolWindow : UserControl
         MenuItem menuItem = (MenuItem)sender;
         TextBlock tvi = GetParentTreeViewItem(menuItem);
 
-        if (tvi is not null && !tvi.Text.ToLowerInvariant().Contains(" (")) // yes a hack
+        if (tvi is not null && tvi.Text.ToLowerInvariant().Contains(" (")) // yes a hack
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             // confirm the delete first
