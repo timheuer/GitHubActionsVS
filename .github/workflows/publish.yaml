@@ -29,19 +29,6 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: ${{ github.event.repository.name }}.vsix
-    
-    - name: Upload to VsixGallery
-      uses: timheuer/openvsixpublish@v1
-      with:
-        vsix-file: ${{ github.event.repository.name }}.vsix
-
-    - name: Publish extension to Marketplace
-      #if: ${{ contains(github.event.head_commit.message, '[release]') }}
-      uses: cezarypiatek/VsixPublisherAction@1.0
-      with:
-        extension-file: '${{ github.event.repository.name }}.vsix'
-        publish-manifest-file: 'vs-publish.json'
-        personal-access-code: ${{ secrets.VS_PUBLISHER_ACCESS_TOKEN }}
 
     - name: Tag and Release
       id: tag_release
@@ -52,4 +39,18 @@ jobs:
         generate_release_notes: true
         files: |
           **/*.vsix
+          
+    - name: Upload to VsixGallery
+      uses: timheuer/openvsixpublish@v1
+      with:
+        vsix-file: ${{ github.event.repository.name }}.vsix
+
+    - name: Publish extension to Marketplace
+      #if: ${{ contains(github.event.head_commit.message, '[release]') }}
+      continue-on-error: true # remove after VS bug fix
+      uses: cezarypiatek/VsixPublisherAction@1.0
+      with:
+        extension-file: '${{ github.event.repository.name }}.vsix'
+        publish-manifest-file: 'vs-publish.json'
+        personal-access-code: ${{ secrets.VS_PUBLISHER_ACCESS_TOKEN }}
     
