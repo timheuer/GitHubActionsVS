@@ -10,6 +10,7 @@ using System.Threading;
 
 namespace GitHubActionsVS;
 [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
+[InstalledProductRegistration(Vsix.Name, Vsix.Description, Vsix.Id)]
 [ProvideToolWindow(typeof(ActionsToolWindow.Pane), Style = VsDockStyle.Tabbed, Window = WindowGuids.SolutionExplorer)]
 [ProvideOptionPage(typeof(OptionsProvider.ExtensionOptionsOptions), "GitHub", "Actions", 0, 0, true, SupportsProfiles = true)]
 [ProvideMenuResource("Menus.ctmenu", 1)]
