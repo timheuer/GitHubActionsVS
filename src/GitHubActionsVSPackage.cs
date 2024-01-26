@@ -33,6 +33,11 @@ public sealed class GitHubActionsVSPackage : ToolkitPackage, IVsSolutionEvents
 
         await this.RegisterCommandsAsync();
 
+        // Setup ratings prompt
+        ExtensionOptions options = await ExtensionOptions.GetLiveInstanceAsync();
+        RatingPrompt prompt = new("TimHeuer.GitHubActionsVS", Vsix.Name, options);
+        prompt.RegisterSuccessfulUsage();
+
         this.RegisterToolWindows();
     }
 

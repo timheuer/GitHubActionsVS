@@ -10,7 +10,7 @@ internal partial class OptionsProvider
     public class ExtensionOptionsOptions : BaseOptionPage<ExtensionOptions> { }
 }
 
-public class ExtensionOptions : BaseOptionModel<ExtensionOptions>
+public class ExtensionOptions : BaseOptionModel<ExtensionOptions>, IRatingConfig
 {
     [Category("Query Settings")]
     [DisplayName("Max Runs")]
@@ -29,4 +29,7 @@ public class ExtensionOptions : BaseOptionModel<ExtensionOptions>
     [Description("The interval (in seconds) to poll/refresh when pending/active jobs are going")]
     [DefaultValue(5)]
     public int RefreshInterval { get; set; } = 5;
+
+    [Browsable(false)]
+    public int RatingRequests { get; set; }
 }
