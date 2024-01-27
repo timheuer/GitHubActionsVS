@@ -29,7 +29,7 @@ jobs:
 
     - name: Version stamping
       id: vsix_version
-      uses: dotnet/nbgv@e6830c173ef6061fe122d7205ac31bb2f8cca842
+      uses: dotnet/nbgv@v0.4.1
       with:
         setAllVars: true
 
