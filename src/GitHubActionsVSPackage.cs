@@ -10,6 +10,8 @@ using System.Threading;
 
 namespace GitHubActionsVS;
 [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
+[ProvideAutoLoad(VSConstants.UICONTEXT.SolutionHasSingleProject_string, PackageAutoLoadFlags.BackgroundLoad)]
+[ProvideAutoLoad(VSConstants.UICONTEXT.SolutionHasMultipleProjects_string, PackageAutoLoadFlags.BackgroundLoad)]
 [InstalledProductRegistration(Vsix.Name, Vsix.Description, Vsix.Version)]
 [ProvideToolWindow(typeof(ActionsToolWindow.Pane), Style = VsDockStyle.Tabbed, Window = WindowGuids.SolutionExplorer)]
 [ProvideOptionPage(typeof(OptionsProvider.ExtensionOptionsOptions), "GitHub", "Actions", 0, 0, true, SupportsProfiles = true)]
@@ -32,11 +34,6 @@ public sealed class GitHubActionsVSPackage : ToolkitPackage, IVsSolutionEvents
         _solution?.AdviseSolutionEvents(this, out _cookie);
 
         await this.RegisterCommandsAsync();
-
-        // Setup ratings prompt
-        ExtensionOptions options = await ExtensionOptions.GetLiveInstanceAsync();
-        RatingPrompt prompt = new("TimHeuer.GitHubActionsVS", Vsix.Name, options);
-        prompt.RegisterSuccessfulUsage();
 
         this.RegisterToolWindows();
     }

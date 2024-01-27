@@ -31,6 +31,7 @@ public partial class GHActionsToolWindow : UserControl
 
     public GHActionsToolWindow(ToolWindowMessenger toolWindowMessenger)
     {
+
         _toolWindowMessenger = toolWindowMessenger ??= new();
         toolWindowMessenger.MessageReceived += OnMessageReceived;
         InitializeComponent();
@@ -154,6 +155,11 @@ public partial class GHActionsToolWindow : UserControl
 
     private async Task LoadDataAsync()
     {
+        // Setup ratings prompt
+        ExtensionOptions options = await ExtensionOptions.GetLiveInstanceAsync();
+        RatingPrompt prompt = new("TimHeuer.GitHubActionsVS", Vsix.Name, options, 4);
+        prompt.RegisterSuccessfulUsage();
+
         MessageArea.Visibility = Visibility.Collapsed;
         ActionsInfoPanel.Visibility = Visibility.Visible;
 
