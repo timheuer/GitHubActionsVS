@@ -9,7 +9,7 @@ namespace GitHubActionsVS
     {
         public const string Id = "TimHeuer.GitHubActions";
         public const string Name = "GitHub Actions";
-        public const string Description = @"A window that provides a view of GitHub Actions for the current repo of the opened solution in Visual Studio";
+        public const string Description = @"A window that provides a view of GitHub Actions for the current repo of the opened solution in Visual Studio. Provided by @timheuer";
         public const string Language = "en-US";
         public const string Version = "0.0.999";
         public const string Author = "Tim Heuer";
