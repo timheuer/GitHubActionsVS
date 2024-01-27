@@ -19,9 +19,11 @@ jobs:
     runs-on: windows-2022
     env:
         PROJECT_PATH: "src/GitHubActionsVS.sln"
+        VsixManifestPath: src\source.extension.vsixmanifest
+        VsixManifestSourcePath: src\source.extension.cs
       
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         fetch-depth: 0
 
@@ -38,17 +40,25 @@ jobs:
         sdk: 'false'
         msbuild: 'true'
 
+    - name: Increment VSIX version
+      id: vsix_version
+      uses: timheuer/vsix-version-stamp@v2
+      with:
+        manifest-file: ${{ env.VsixManifestPath }}
+        vsix-token-source-file: ${{ env.VsixManifestSourcePath }}
+        version-number: ${{ steps.vsix_version.outputs.SimpleVersion }}
+
     - name: 🏗️ Build
       run: msbuild ${{ env.PROJECT_PATH }} /p:Configuration=Release /v:m -restore /p:OutDir=\_built -bl
 
     - name: ⬆️ Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: msbuild.binlog
         path: msbuild.binlog
 
     - name: ⬆️ Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ${{ github.event.repository.name }}.vsix
         path: /_built/**/*.vsix

@@ -67,7 +67,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>UIStrings.resx</DependentUpon>
     </Compile>
-    <Compile Include="source.vsixinfo.cs" />
+    <Compile Include="source.extension.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>source.extension.vsixmanifest</DependentUpon>
+    </Compile>
     <Compile Include="ToolWindows\GHActionsToolWindow.xaml.cs">
       <DependentUpon>GHActionsToolWindow.xaml</DependentUpon>
     </Compile>
@@ -98,6 +102,7 @@
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
       <Generator>VsixManifestGenerator</Generator>
+      <LastGenOutput>source.extension.cs</LastGenOutput>
     </None>
     <Content Include="lib\win32\x64\git2-e632535.dll">
       <IncludeInVSIX>true</IncludeInVSIX>

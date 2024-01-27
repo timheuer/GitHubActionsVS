@@ -21,12 +21,12 @@ jobs:
         VERSION: ${{ needs.build.outputs.version }}
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         fetch-depth: 0
 
     - name: Download Package artifact
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: ${{ github.event.repository.name }}.vsix
 
