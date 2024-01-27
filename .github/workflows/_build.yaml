@@ -41,7 +41,7 @@ jobs:
         msbuild: 'true'
 
     - name: Increment VSIX version
-      id: vsix_version
+      id: vsix_version_stamp
       uses: timheuer/vsix-version-stamp@v2
       with:
         manifest-file: ${{ env.VsixManifestPath }}
