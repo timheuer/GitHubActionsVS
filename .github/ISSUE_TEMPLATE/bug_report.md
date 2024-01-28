@@ -1,30 +1,31 @@
----
-name: Bug report
-about: Create a report to help us improve
-title: ''
-labels: ''
-assignees: ''
-
----
-
-**Describe the bug**
-A clear and concise description of what the bug is.
-
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
-
-**Expected behavior**
-A clear and concise description of what you expected to happen.
-
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
-
-**Visual Studio version(please complete the following information):**
- - Version [e.g. from Help...About menu in VS]
-
-**Additional context**
-Add any other context about the problem here.
+name: Bug Report
+description: File a bug report
+title: ""
+labels: ["bug"]
+assignees:
+  - timheuer
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Also tell us, what did you expect to happen?
+      placeholder: Tell us what you see!
+      value: "A bug happened!"
+    validations:
+      required: true
+  - type: textarea
+    id: vsversion
+    attributes:
+      label: Visual Studio Version
+      description: Copy the Visual Studio version from your Help...About Visual Studio menu
+      placeholder: Version 17.8.5
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: Please copy and paste any relevant log output. From the Output window for "GitHub Actions for VS"
