@@ -50,10 +50,17 @@ public partial class GHActionsToolWindow : UserControl
                 MessageCommand.Refresh => GetRepoInfoAsync(),
                 MessageCommand.GotoRepo => GotoRepoAsync(),
                 MessageCommand.OpenSettings => OpenSettingsAsync(),
-
+                MessageCommand.ReportFeedback => ReportFeedbackAsync(text),
                 _ => Task.CompletedTask
             });
         }).FireAndForget();
+    }
+
+    private Task ReportFeedbackAsync(string text)
+    {
+        Process.Start($"https://github.com/timheuer/GitHubActionsVS/issues/new?assignees=timheuer&labels=bug&projects=&template=bug_report.yaml&title=%5BBUG%5D%3A+&vsversion={text}");
+        
+        return Task.CompletedTask;
     }
 
     private async Task OpenSettingsAsync()

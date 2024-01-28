@@ -4,5 +4,6 @@ public enum MessageCommand
 {
     GotoRepo,
     Refresh,
-    OpenSettings
+    OpenSettings,
+    ReportFeedback
 }

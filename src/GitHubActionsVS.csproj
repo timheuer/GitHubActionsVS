@@ -48,6 +48,7 @@
     <Compile Include="Commands\GotoRepoCommand.cs" />
     <Compile Include="Commands\OpenSettingsCommand.cs" />
     <Compile Include="Commands\RefreshRepoCommand.cs" />
+    <Compile Include="Commands\ReportFeedbackCommand.cs" />
     <Compile Include="Converters\ConclusionColorConverter.cs" />
     <Compile Include="Converters\ConclusionIconConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />

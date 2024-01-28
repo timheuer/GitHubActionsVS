@@ -72,6 +72,15 @@
 					<LocCanonicalName>.View.OpenSettings</LocCanonicalName>
 				</Strings>
 			</Button>
+				<Button guid="GitHubActionsVS" id="ReportFeedbackCommand" priority="0x0004" type="Button">
+				<Parent guid="GitHubActionsVS" id="TWindowToolbarGroup"/>
+				<Icon guid="ImageCatalogGuid" id="Feedback"/>
+				<CommandFlag>IconIsMoniker</CommandFlag>
+				<Strings>
+					<ButtonText>Report Feedback about this extension</ButtonText>
+					<LocCanonicalName>.View.ReportFeedback</LocCanonicalName>
+				</Strings>
+			</Button>
 		</Buttons>
 	</Commands>
 
@@ -84,6 +93,7 @@
 			<IDSymbol name="RefreshRepoCommand" value="0x0111" />
 			<IDSymbol name="GotoRepoCommand" value="0x0112" />
 			<IDSymbol name="OpenSettingsCommand" value="0x0113" />
+			<IDSymbol name="ReportFeedbackCommand" value="0x0114"/>
 		</GuidSymbol>
 	</Symbols>
 </CommandTable>

@@ -27,5 +27,6 @@ namespace GitHubActionsVS
         public const int RefreshRepoCommand = 0x0111;
         public const int GotoRepoCommand = 0x0112;
         public const int OpenSettingsCommand = 0x0113;
+        public const int ReportFeedbackCommand = 0x0114;
     }
 }
