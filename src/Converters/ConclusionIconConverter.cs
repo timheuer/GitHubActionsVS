@@ -23,7 +23,7 @@ public class ConclusionIconConverter : IValueConverter
         "startup_failure" => "\uEC13 ",
         "cancelled" => "\uEC19 ",
         "skipped" => "\uEABD ",
-        "pending" => "\uEB81 ",
+        "pending" => "\uEC15 ",
         "queued" => "\uEBA7 ",
         "requested" => "\uEBA7 ",
         "waiting" => "\uEA82 ",
