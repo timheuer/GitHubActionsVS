@@ -12,6 +12,9 @@
         <PreviewImage>Resources\Icon.png</PreviewImage>
         <Tags>github,actions,workflow,devops,dotnet</Tags>
         <Preview>true</Preview>
+		<Properties>
+			<Property Id="Microsoft.VisualStudio.Services.Links.Support" Value="https://github.com/timheuer/GitHubActionsVS/issues" />
+		</Properties>
     </Metadata>
     <Installation>
         <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[17.0, 18.0)">
