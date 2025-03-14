@@ -99,13 +99,13 @@ public partial class GHActionsToolWindow : UserControl
         refreshInterval = generalSettings.RefreshInterval;
         refreshPending = generalSettings.RefreshActiveJobs;
 
-        await _pane.WriteLineAsync("Extension settings retrieved and applied");
+        await _pane.WriteLineAsync($"[{DateTime.UtcNow.ToString("o")}] Extension settings retrieved and applied");
 
         // find the git folder
         var solution = await VS.Solutions.GetCurrentSolutionAsync();
         if (solution is null)
         {
-            await _pane.WriteLineAsync("No solution found");
+            await _pane.WriteLineAsync($"[{DateTime.UtcNow.ToString("o")}] No solution found");
             Debug.WriteLine("No solution found");
             ShowInfoMessage(resx.NO_PROJ_LOADED);
             return;
@@ -116,7 +116,7 @@ public partial class GHActionsToolWindow : UserControl
 
         if (string.IsNullOrWhiteSpace(gitPath))
         {
-            await _pane.WriteLineAsync("No git repo found");
+            await _pane.WriteLineAsync($"[{DateTime.UtcNow.ToString("o")}] No git repo found");
             Debug.WriteLine("No git repo found");
             ShowInfoMessage(resx.NO_GIT_REPO);
         }
@@ -126,12 +126,12 @@ public partial class GHActionsToolWindow : UserControl
             if (_repoInfo.IsGitHub)
             {
                 Debug.WriteLine($"GitHub repo: {_repoInfo.RepoOwner}/{_repoInfo.RepoName}");
-                await _pane.WriteLineAsync($"Found repo for {gitPath} at {_repoInfo.RepoOwner}/{_repoInfo.RepoName}");
+                await _pane.WriteLineAsync($"[{DateTime.UtcNow.ToString("o")}] Found repo for {gitPath} at {_repoInfo.RepoOwner}/{_repoInfo.RepoName}");
                 await LoadDataAsync();
             }
             else
             {
-                await _pane.WriteLineAsync("Not a GitHub repo");
+                await _pane.WriteLineAsync($"[{DateTime.UtcNow.ToString("o")}] Not a GitHub repo");
                 Debug.WriteLine("Not a GitHub repo");
                 ShowInfoMessage(resx.GIT_NOT_GITHUB);
             }
@@ -184,7 +184,7 @@ public partial class GHActionsToolWindow : UserControl
             // get workflows
             await RefreshWorkflowsAsync(client);
 
-            await _pane.WriteLineAsync("Loading Workflow Runs...");
+            await _pane.WriteLineAsync($"[{DateTime.UtcNow.ToString("o")}] Loading Workflow Runs...");
             // get current branch
             var runs = await client.Actions?.Workflows?.Runs?.List(_repoInfo.RepoOwner, _repoInfo.RepoName, new WorkflowRunsRequest() { Branch = _repoInfo.CurrentBranch }, new ApiOptions() { PageCount = 1, PageSize = maxRuns });
 
@@ -192,7 +192,7 @@ public partial class GHActionsToolWindow : UserControl
 
             if (runs.TotalCount > 0)
             {
-                await _pane.WriteLineAsync($"Number of runs found: {runs.TotalCount}");
+                await _pane.WriteLineAsync($"[{DateTime.UtcNow.ToString("o")}] Number of runs found: {runs.TotalCount}");
                 // creating simplified model of the GH info for the treeview
 
                 // iterate throught the runs
@@ -276,7 +276,7 @@ public partial class GHActionsToolWindow : UserControl
         }
         catch (ApiException ex)
         {
-            await _pane.WriteLineAsync($"Error retrieving Workflow Runs: {ex.Message}:{ex.StatusCode}");
+            await _pane.WriteLineAsync($"[{DateTime.UtcNow.ToString("o")}] Error retrieving Workflow Runs: {ex.Message}:{ex.StatusCode}");
             await ex.LogAsync();
         }
         catch (Exception ex)
@@ -292,7 +292,7 @@ public partial class GHActionsToolWindow : UserControl
     private async Task RefreshEnvironmentsAsync(GitHubClient client)
     {
         List<SimpleEnvironment> envList = new List<SimpleEnvironment>();
-        await _pane.WriteLineAsync("Loading Environments...");
+        await _pane.WriteLineAsync($"[{DateTime.UtcNow.ToString("o")}] Loading Environments...");
         try
         {
             var repoEnvs = await client.Repository?.Environment?.GetAll(_repoInfo.RepoOwner, _repoInfo.RepoName);
@@ -335,7 +335,7 @@ public partial class GHActionsToolWindow : UserControl
 
     private async Task RefreshWorkflowsAsync(GitHubClient client)
     {
-        await _pane.WriteLineAsync("Loading Workflows...");
+        await _pane.WriteLineAsync($"[{DateTime.UtcNow.ToString("o")}] Loading Workflows...");
         try
         {
             var workflows = await client.Actions?.Workflows?.List(_repoInfo.RepoOwner, _repoInfo.RepoName);
@@ -343,7 +343,7 @@ public partial class GHActionsToolWindow : UserControl
         }
         catch (ApiException ex)
         {
-            await _pane.WriteLineAsync($"Error retrieving Workflows: {ex.Message}:{ex.StatusCode}");
+            await _pane.WriteLineAsync($"[{DateTime.UtcNow.ToString("o")}] Error retrieving Workflows: {ex.Message}:{ex.StatusCode}");
             await ex.LogAsync();
         }
         catch (Exception ex)
@@ -355,14 +355,14 @@ public partial class GHActionsToolWindow : UserControl
     private async Task RefreshSecretsAsync(GitHubClient client)
     {
         List<string> secretList = new();
-        await _pane.WriteLineAsync("Loading Secrets...");
+        await _pane.WriteLineAsync($"[{DateTime.UtcNow.ToString("o")}] Loading Secrets...");
         try
         {
             var repoSecrets = await client.Repository?.Actions?.Secrets?.GetAll(_repoInfo.RepoOwner, _repoInfo.RepoName);
 
             if (repoSecrets.TotalCount > 0)
             {
-                await _pane.WriteLineAsync($"Number of Repository Secrets found: {repoSecrets.TotalCount}");
+                await _pane.WriteLineAsync($"[{DateTime.UtcNow.ToString("o")}] Number of Repository Secrets found: {repoSecrets.TotalCount}");
                 tvSecrets.Header = $"{resx.HEADER_REPO_SECRETS} ({repoSecrets.TotalCount})";
                 foreach (var secret in repoSecrets.Secrets)
                 {
@@ -380,7 +380,7 @@ public partial class GHActionsToolWindow : UserControl
         {
             if (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized || ex.StatusCode == System.Net.HttpStatusCode.Forbidden)
             {
-                await _pane.WriteLineAsync($"Error retrieving Secrets: {ex.Message}:{ex.StatusCode}");
+                await _pane.WriteLineAsync($"[{DateTime.UtcNow.ToString("o")}] Error retrieving Secrets: {ex.Message}:{ex.StatusCode}");
                 secretList.Add(resx.INSUFFICIENT_SECRET_PERMS);
                 await ex.LogAsync(ex.Message);
             }
@@ -438,7 +438,7 @@ public partial class GHActionsToolWindow : UserControl
         {
             if (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized || ex.StatusCode == System.Net.HttpStatusCode.Forbidden)
             {
-                await _pane.WriteLineAsync($"Error saving Secret: {ex.Message}:{ex.StatusCode}");
+                await _pane.WriteLineAsync($"[{DateTime.UtcNow.ToString("o")}] Error saving Secret: {ex.Message}:{ex.StatusCode}");
                 await ex.LogAsync(ex.Message);
             }
         }
