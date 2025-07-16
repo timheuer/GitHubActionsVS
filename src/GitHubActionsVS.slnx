@@ -1,0 +1,22 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="arm64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Solution Items/">
+    <File Path="../.gitignore" />
+    <File Path="../README.md" />
+    <File Path="../version.json" />
+    <File Path="../vs-publish.json" />
+  </Folder>
+  <Folder Name="/Workflows/">
+    <File Path="../.github/workflows/pr.yaml" />
+    <File Path="../.github/workflows/publish.yaml" />
+    <File Path="../.github/workflows/_build.yaml" />
+  </Folder>
+  <Project Path="GitHubActionsVS.csproj" Id="fbffefba-f117-44a7-aca1-3ece4cc42310">
+    <Platform Solution="*|arm64" Project="arm64" />
+    <Platform Solution="*|x86" Project="x86" />
+  </Project>
+</Solution>
