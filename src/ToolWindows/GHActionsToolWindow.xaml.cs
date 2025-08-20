@@ -112,9 +112,9 @@ public partial class GHActionsToolWindow : UserControl
         }
         var projectPath = solution?.FullPath;
 
-        _repoInfo.FindGitFolder(projectPath, out string gitPath);
+        var found = _repoInfo.TryFindGitFolder(projectPath, out string gitPath);
 
-        if (string.IsNullOrWhiteSpace(gitPath))
+        if (!found)
         {
             await _pane.WriteLineAsync($"[{DateTime.UtcNow.ToString("o")}] No git repo found");
             Debug.WriteLine("No git repo found");

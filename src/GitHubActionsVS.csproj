@@ -54,6 +54,7 @@
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="Helpers\ConclusionFilter.cs" />
     <Compile Include="Helpers\CredentialManager.cs" />
+    <Compile Include="Helpers\GitUri.cs" />
     <Compile Include="Helpers\RepoInfo.cs" />
     <Compile Include="Models\BaseWorkflowType.cs" />
     <Compile Include="Models\SimpleEnvironment.cs" />
