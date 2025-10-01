@@ -1,19 +1,22 @@
 ﻿using GitHubActionsVS.Helpers;
 using GitHubActionsVS.Models;
 using GitHubActionsVS.ToolWindows;
+using GitHubActionsVS.UserControls;
+using Humanizer;
 using Octokit;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading.Tasks;
+using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using GitHubActionsVS.UserControls;
+using YamlDotNet.Core;
+using YamlDotNet.RepresentationModel;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 using Application = System.Windows.Application;
-using System.Windows.Media;
-using MessageBox = Community.VisualStudio.Toolkit.MessageBox;
 using resx = GitHubActionsVS.Resources.UIStrings;
-using Humanizer;
 
 namespace GitHubActionsVS;
 
@@ -59,7 +62,7 @@ public partial class GHActionsToolWindow : UserControl
     private Task ReportFeedbackAsync(string text)
     {
         Process.Start($"https://github.com/timheuer/GitHubActionsVS/issues/new?assignees=timheuer&labels=bug&projects=&template=bug_report.yaml&title=%5BBUG%5D%3A+&vsversion={text}");
-        
+
         return Task.CompletedTask;
     }
 
@@ -212,7 +215,7 @@ public partial class GHActionsToolWindow : UserControl
 
                     if (refreshPending)
                     {
-                        var timer = new System.Timers.Timer(refreshInterval*1000);
+                        var timer = new System.Timers.Timer(refreshInterval * 1000);
                         timer.Elapsed += async (sender, e) =>
                         {
                             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
@@ -296,7 +299,7 @@ public partial class GHActionsToolWindow : UserControl
         try
         {
             var repoEnvs = await client.Repository?.Environment?.GetAll(_repoInfo.RepoOwner, _repoInfo.RepoName);
-            
+
             if (repoEnvs.TotalCount > 0)
             {
                 tvEnvironments.Header = $"{resx.HEADER_ENVIRONMENTS} ({repoEnvs.TotalCount})";
@@ -352,6 +355,7 @@ public partial class GHActionsToolWindow : UserControl
         }
 
     }
+
     private async Task RefreshSecretsAsync(GitHubClient client)
     {
         List<string> secretList = new();
@@ -540,22 +544,80 @@ public partial class GHActionsToolWindow : UserControl
 
     private void RunWorkflow_Click(object sender, RoutedEventArgs e)
     {
+        _ = RunWorkflowInternalAsync(sender, e);
+    }
+
+    private async Task RunWorkflowInternalAsync(object sender, RoutedEventArgs e)
+    {
         MenuItem menuItem = (MenuItem)sender;
         TextBlock tvi = GetParentTreeViewItem(menuItem);
 
-        // check the tag value to ensure it isn't null
         if (tvi is not null && tvi.Tag is not null)
         {
             GitHubClient client = GetGitHubClient();
-            CreateWorkflowDispatch cwd = new CreateWorkflowDispatch(_repoInfo.CurrentBranch);
+            long workflowId = (long)tvi.Tag;
 
             try
             {
-                _ = client.Actions.Workflows.CreateDispatch(_repoInfo.RepoOwner, _repoInfo.RepoName, (long)tvi.Tag, cwd);
+                await _pane.WriteLineAsync($"[{DateTime.UtcNow:o}] Fetching workflow details...");
+                var workflow = await client.Actions.Workflows.Get(_repoInfo.RepoOwner, _repoInfo.RepoName, workflowId);
+
+                var contents = await client.Repository.Content.GetAllContents(_repoInfo.RepoOwner, _repoInfo.RepoName, workflow.Path);
+                var workflowContent = contents.FirstOrDefault()?.Content;
+
+                if (!string.IsNullOrEmpty(workflowContent) && StringHelpers.IsBase64(workflowContent))
+                    workflowContent = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(workflowContent));
+
+                if (string.IsNullOrEmpty(workflowContent))
+                {
+                    await _pane.WriteLineAsync($"[{DateTime.UtcNow:o}] Could not retrieve workflow file content");
+                    var cwdNoContent = new CreateWorkflowDispatch(_repoInfo.CurrentBranch);
+                    await client.Actions.Workflows.CreateDispatch(_repoInfo.RepoOwner, _repoInfo.RepoName, workflowId, cwdNoContent);
+                    VS.StatusBar.ShowMessageAsync("Workflow run requested...").FireAndForget();
+                    return;
+                }
+
+                var workflowInputs = ParseWorkflowInputs(workflowContent);
+
+                if (workflowInputs.Count == 0)
+                {
+                    var cwdNoInputs = new CreateWorkflowDispatch(_repoInfo.CurrentBranch);
+                    await _pane.WriteLineAsync($"[{DateTime.UtcNow:o}] No inputs found; dispatching...");
+                    await client.Actions.Workflows.CreateDispatch(_repoInfo.RepoOwner, _repoInfo.RepoName, workflowId, cwdNoInputs);
+                    VS.StatusBar.ShowMessageAsync("Workflow run requested...").FireAndForget();
+                    return;
+                }
+
+                var metas = InputMetadata.ToInputMeta(workflowInputs);
+
+                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+                var inputsDialog = new WorkflowInputsDialog(workflow.Name, metas)
+                {
+                    Owner = Application.Current.MainWindow
+                };
+
+                bool? result = inputsDialog.ShowDialog();
+                if (result != true)
+                {
+                    await _pane.WriteLineAsync($"[{DateTime.UtcNow:o}] Workflow dispatch canceled by user");
+                    return;
+                }
+
+                var values = inputsDialog.GetInputValues();
+
+                var cwd = new CreateWorkflowDispatch(_repoInfo.CurrentBranch)
+                {
+                    Inputs = values.ToDictionary(kvp => kvp.Key, kvp => (object)kvp.Value, StringComparer.Ordinal)
+                };
+
+                await _pane.WriteLineAsync($"[{DateTime.UtcNow:o}] Dispatching workflow...");
+                await client.Actions.Workflows.CreateDispatch(_repoInfo.RepoOwner, _repoInfo.RepoName, workflowId, cwd);
                 VS.StatusBar.ShowMessageAsync("Workflow run requested...").FireAndForget();
             }
             catch (Exception ex)
             {
+                await _pane.WriteLineAsync($"[{DateTime.UtcNow:o}] Error running workflow: {ex.Message}");
                 Debug.WriteLine($"Failed to start workflow: {ex.Message}");
             }
         }
@@ -593,5 +655,135 @@ public partial class GHActionsToolWindow : UserControl
             }
         }
     }
-}
 
+    public static IReadOnlyDictionary<string, IReadOnlyDictionary<string, object>> ParseWorkflowInputs(string workflowContent)
+    {
+        if (string.IsNullOrWhiteSpace(workflowContent))
+        {
+            Debug.WriteLine("ParseWorkflowInputs: empty workflow content.");
+            return new Dictionary<string, IReadOnlyDictionary<string, object>>(StringComparer.Ordinal);
+        }
+
+        try
+        {
+            var deserializer = new DeserializerBuilder()
+                .IgnoreUnmatchedProperties()
+                .WithNamingConvention(UnderscoredNamingConvention.Instance)
+                .Build();
+
+            var root = deserializer.Deserialize<WorkflowRoot>(workflowContent);
+
+            var inputs = root?.On?.WorkflowDispatch?.Inputs;
+            if (inputs is { Count: > 0 })
+            {
+                var result = inputs.ToDictionary(
+                    kvp => kvp.Key,
+                    kvp => (IReadOnlyDictionary<string, object>)(kvp.Value ?? []),
+                    StringComparer.Ordinal
+                );
+
+                Debug.WriteLine($"ParseWorkflowInputs: found {result.Count} input(s) via POCO.");
+                return result;
+            }
+
+            var fallback = TryExtractInputsWithNodes(workflowContent);
+            if (fallback.Count > 0)
+            {
+                Debug.WriteLine($"ParseWorkflowInputs: found {fallback.Count} input(s) via node-walk.");
+                return fallback;
+            }
+
+            Debug.WriteLine("ParseWorkflowInputs: no workflow_dispatch.inputs found.");
+        }
+        catch (YamlException yex)
+        {
+            Debug.WriteLine($"YAML parse error: {yex.Message}");
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Unexpected error parsing workflow YAML: {ex.Message}");
+        }
+
+        return new Dictionary<string, IReadOnlyDictionary<string, object>>(StringComparer.Ordinal);
+    }
+
+    private static IReadOnlyDictionary<string, IReadOnlyDictionary<string, object>> TryExtractInputsWithNodes(string yamlText)
+    {
+        var outDict = new Dictionary<string, IReadOnlyDictionary<string, object>>(StringComparer.Ordinal);
+
+        using var reader = new StringReader(yamlText);
+        var ys = new YamlStream();
+        ys.Load(reader);
+
+        if (ys.Documents.Count == 0 || ys.Documents[0].RootNode is not YamlMappingNode root) return outDict;
+
+        if (!root.Children.TryGetValue(new YamlScalarNode("on"), out var onNode))
+            return outDict;
+
+        static void ReadInputsFromMapping(YamlMappingNode mapping, Dictionary<string, IReadOnlyDictionary<string, object>> target)
+        {
+            if (!mapping.Children.TryGetValue(new YamlScalarNode("inputs"), out var inputsNode) ||
+                inputsNode is not YamlMappingNode inputsMap)
+                return;
+
+            foreach (var kv in inputsMap.Children)
+            {
+                var name = kv.Key.ToString();
+                var details = new Dictionary<string, object?>(StringComparer.Ordinal);
+
+                if (kv.Value is YamlMappingNode dets)
+                {
+                    foreach (var d in dets.Children)
+                    {
+                        var key = d.Key.ToString();
+                        object? val = d.Value switch
+                        {
+                            YamlScalarNode s => s.Value,
+                            YamlSequenceNode seq => seq.Children.Select(c => (c as YamlScalarNode)?.Value).ToArray(),
+                            YamlMappingNode m => m.Children.ToDictionary(
+                                p => p.Key.ToString(),
+                                p => (object?)(p.Value as YamlScalarNode)?.Value,
+                                StringComparer.Ordinal),
+                            _ => d.Value?.ToString()
+                        };
+                        details[key] = val;
+                    }
+                }
+
+                target[name] = details;
+            }
+        }
+
+        onNode = YamlHelpers.Unalias(onNode);
+        switch (onNode)
+        {
+            case YamlScalarNode s when string.Equals(s.Value, "workflow_dispatch", StringComparison.Ordinal):
+                break;
+
+            case YamlSequenceNode seq:
+                foreach (var child in seq.Children)
+                {
+                    if (child is YamlScalarNode sc &&
+                        string.Equals(sc.Value, "workflow_dispatch", StringComparison.Ordinal))
+                        continue;
+
+                    if (child is YamlMappingNode mm &&
+                        YamlHelpers.TryGetScalarKey(mm, "workflow_dispatch", out var wfNode))
+                    {
+                        wfNode = YamlHelpers.Unalias(wfNode);
+                        if (wfNode is YamlMappingNode wfMap)
+                            ReadInputsFromMapping(wfMap, outDict);
+                    }
+                }
+                break;
+
+            case YamlMappingNode map when YamlHelpers.TryGetScalarKey(map, "workflow_dispatch", out var wfdNode):
+                wfdNode = YamlHelpers.Unalias(wfdNode);
+                if (wfdNode is YamlMappingNode wfdMap2)
+                    ReadInputsFromMapping(wfdMap2, outDict);
+                break;
+        }
+
+        return outDict;
+    }
+}
