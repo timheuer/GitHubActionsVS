@@ -132,7 +132,7 @@
                     <Expander Header="{x:Static resx:UIStrings.HEADER_CURRENT_BRANCH}" x:Name="CurrentBranchExpander" FontWeight="Bold" ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Header}">
                         <TreeView BorderThickness="0" FontWeight="Normal" PreviewMouseWheel="HandlePreviewMouseWheel" x:Name="tvCurrentBranch" ItemTemplate="{StaticResource TreeViewRunNodeDataTemplate}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
                             <TreeView.Resources>
-                                <Style TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource {x:Static shell:VsResourceKeys.ThemedDialogTreeViewItemStyleKey}}">
+                                <Style TargetType="{x:Type TreeViewItem}">
                                     <EventSetter Event="MouseDoubleClick" Handler="JobItem_MouseDoubleClick"/>
                                 </Style>
                             </TreeView.Resources>
@@ -147,7 +147,7 @@
                             <TreeViewItem ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Header}" Header="{x:Static resx:UIStrings.HEADER_SECRETS}" HeaderTemplate="{StaticResource SecretsHeaderTemplate}">
                                 <TreeViewItem ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Header}" x:Name="tvSecrets" HeaderTemplate="{StaticResource RepoSecretsHeaderTemplate}">
                                     <TreeViewItem.Resources>
-                                        <Style TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource {x:Static shell:VsResourceKeys.ThemedDialogTreeViewItemStyleKey}}">
+                                        <Style TargetType="{x:Type TreeViewItem}">
                                             <EventSetter Event="MouseDoubleClick" Handler="Secret_MouseDoubleClick"/>
                                         </Style>
                                     </TreeViewItem.Resources>
