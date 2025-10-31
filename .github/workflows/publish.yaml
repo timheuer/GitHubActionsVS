@@ -1,7 +1,13 @@
 name: "Publish"
 
-on: [push,workflow_dispatch]
-      
+on: 
+    push:
+      branches:
+        - main
+    workflow_dispatch:
+        inputs:
+            Command:
+                description: 'Publish command'
 jobs:
   build:
     name: Build and Test
@@ -46,7 +52,8 @@ jobs:
         vsix-file: ${{ github.event.repository.name }}.vsix
 
     - name: Publish extension to Marketplace
-      if: ${{ contains(github.event.head_commit.message, '[release]') }}
+      id: publish_vsix
+      if: ${{ (github.event_name == 'push' && contains(github.event.head_commit.message, '[release]')) || (github.event_name == 'workflow_dispatch' && contains(github.event.inputs.Command, '[release]')) }}
       continue-on-error: true # remove after VS bug fix
       uses: cezarypiatek/VsixPublisherAction@1.1
       with:
