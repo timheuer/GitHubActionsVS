@@ -89,9 +89,21 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="libsodium.dll">
+    <Content Include="lib\win32\x64\libsodium.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="lib\win32\x64\git2-e632535.dll">
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="lib\win32\arm64\libsodium.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="lib\win32\arm64\git2-e632535.dll">
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Resource Include="Resources\Run.png" />
     <Resource Include="Resources\OpenWebSite.png" />
@@ -105,10 +117,6 @@
       <Generator>VsixManifestGenerator</Generator>
       <LastGenOutput>source.extension.cs</LastGenOutput>
     </None>
-    <Content Include="lib\win32\x64\git2-e632535.dll">
-      <IncludeInVSIX>true</IncludeInVSIX>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Resource Include="Resources\AddItem.png" />
     <Resource Include="Resources\Delete.png" />
     <Resource Include="Resources\Edit.png" />
