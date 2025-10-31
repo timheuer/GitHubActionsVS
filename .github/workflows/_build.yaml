@@ -18,7 +18,7 @@ jobs:
     name: Build 
     runs-on: windows-2022
     env:
-        PROJECT_PATH: "src/GitHubActionsVS.sln"
+        PROJECT_PATH: "src/GitHubActionsVS.slnx"
         VsixManifestPath: src\source.extension.vsixmanifest
         VsixManifestSourcePath: src\source.extension.cs
       
