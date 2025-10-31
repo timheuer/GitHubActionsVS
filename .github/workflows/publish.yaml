@@ -46,7 +46,7 @@ jobs:
         vsix-file: ${{ github.event.repository.name }}.vsix
 
     - name: Publish extension to Marketplace
-      #if: ${{ contains(github.event.head_commit.message, '[release]') }}
+      if: ${{ contains(github.event.head_commit.message, '[release]') }}
       continue-on-error: true # remove after VS bug fix
       uses: cezarypiatek/VsixPublisherAction@1.1
       with:
