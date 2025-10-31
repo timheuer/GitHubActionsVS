@@ -1,19 +1,20 @@
 ﻿using GitHubActionsVS.Helpers;
 using GitHubActionsVS.Models;
 using GitHubActionsVS.ToolWindows;
+using GitHubActionsVS.UserControls;
+using Humanizer;
 using Octokit;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
-using GitHubActionsVS.UserControls;
-using Application = System.Windows.Application;
 using System.Windows.Media;
+using Application = System.Windows.Application;
 using MessageBox = Community.VisualStudio.Toolkit.MessageBox;
 using resx = GitHubActionsVS.Resources.UIStrings;
-using Humanizer;
 
 namespace GitHubActionsVS;
 
@@ -509,17 +510,25 @@ public partial class GHActionsToolWindow : UserControl
         if (result == true)
         {
             GitHubClient client = GetGitHubClient();
-            var pubKey = await client.Repository.Actions.Secrets.GetPublicKey(_repoInfo.RepoOwner, _repoInfo.RepoName);
-
-            UpsertRepositorySecret encryptedSecret = new UpsertRepositorySecret();
-            if (pubKey != null)
+            try
             {
-                var bytes = System.Text.Encoding.UTF8.GetBytes(addEditSecret.SecretValue);
-                var key = Convert.FromBase64String(pubKey.Key);
-                var sealedKeyBox = Sodium.SealedPublicKeyBox.Create(bytes, key);
-                encryptedSecret.KeyId = pubKey.KeyId;
-                encryptedSecret.EncryptedValue = Convert.ToBase64String(sealedKeyBox);
-                _ = await client.Repository.Actions.Secrets.CreateOrUpdate(_repoInfo.RepoOwner, _repoInfo.RepoName, addEditSecret.SecretName, encryptedSecret);
+                var pubKey = await client.Repository.Actions.Secrets.GetPublicKey(_repoInfo.RepoOwner, _repoInfo.RepoName);
+
+                UpsertRepositorySecret encryptedSecret = new UpsertRepositorySecret();
+                if (pubKey != null)
+                {
+                    var bytes = System.Text.Encoding.UTF8.GetBytes(addEditSecret.SecretValue);
+                    var key = Convert.FromBase64String(pubKey.Key);
+                    var sealedKeyBox = Sodium.SealedPublicKeyBox.Create(bytes, key);
+                    encryptedSecret.KeyId = pubKey.KeyId;
+                    encryptedSecret.EncryptedValue = Convert.ToBase64String(sealedKeyBox);
+                    _ = await client.Repository.Actions.Secrets.CreateOrUpdate(_repoInfo.RepoOwner, _repoInfo.RepoName, addEditSecret.SecretName, encryptedSecret);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                await _pane.WriteLineAsync($"[{DateTime.UtcNow.ToString("o")}] Failed to add secret: {ex.Message}");
             }
             await RefreshSecretsAsync(client);
         }

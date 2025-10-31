@@ -7,6 +7,11 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell.Interop;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.IO;
+using System.Runtime.Versioning;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime;
 
 namespace GitHubActionsVS;
 [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
@@ -24,11 +29,17 @@ public sealed class GitHubActionsVSPackage : ToolkitPackage, IVsSolutionEvents
     private IVsSolution _solution;
     private uint _cookie;
 
+    [DllImport("kernel32", SetLastError = true, CharSet = CharSet.Unicode)]
+    private static extern IntPtr LoadLibrary(string lpFileName);
+
     protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
     {
         AddService(typeof(ToolWindowMessenger), (_, _, _) => Task.FromResult<object>(new ToolWindowMessenger()));
 
         await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+
+        // Load native libsodium for current architecture (x64 or ARM64) from VSIX content
+        TryLoadLibSodium();
 
         _solution = await GetServiceAsync(typeof(SVsSolution)) as IVsSolution;
         _solution?.AdviseSolutionEvents(this, out _cookie);
@@ -36,6 +47,36 @@ public sealed class GitHubActionsVSPackage : ToolkitPackage, IVsSolutionEvents
         await this.RegisterCommandsAsync();
 
         this.RegisterToolWindows();
+    }
+
+    private void TryLoadLibSodium()
+    {
+        try
+        {
+            var asmLocation = Path.GetDirectoryName(typeof(GitHubActionsVSPackage).Assembly.Location);
+            if (asmLocation is null)
+                return;
+            var arch = System.Runtime.InteropServices.RuntimeInformation.ProcessArchitecture;
+            string archFolder = arch switch
+            {
+                System.Runtime.InteropServices.Architecture.X64 => "win-x64",
+                System.Runtime.InteropServices.Architecture.Arm64 => "win-arm64",
+                _ => null
+            };
+            if (archFolder is null) return; // unsupported
+            string nativePath = Path.Combine(asmLocation, "runtimes", archFolder, "native", "libsodium.dll");
+            if (!File.Exists(nativePath)) return; // not present
+            IntPtr handle = LoadLibrary(nativePath);
+            if (handle == IntPtr.Zero)
+            {
+                int err = Marshal.GetLastWin32Error();
+                System.Diagnostics.Debug.WriteLine($"Failed to load libsodium from {nativePath}. Win32Error={err}");
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine("Exception loading libsodium: " + ex);
+        }
     }
 
     protected override void Dispose(bool disposing)
