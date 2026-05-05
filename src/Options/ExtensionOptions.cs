@@ -32,4 +32,16 @@ public class ExtensionOptions : BaseOptionModel<ExtensionOptions>, IRatingConfig
 
     [Browsable(false)]
     public int RatingRequests { get; set; }
+
+    [Browsable(false)]
+    [DefaultValue(false)]
+    public bool CurrentBranchExpanded { get; set; } = false;
+
+    [Browsable(false)]
+    [DefaultValue(true)]
+    public bool WorkflowsExpanded { get; set; } = true;
+
+    [Browsable(false)]
+    [DefaultValue(false)]
+    public bool SecretsExpanded { get; set; } = false;
 }
