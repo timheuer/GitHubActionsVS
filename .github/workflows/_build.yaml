@@ -23,18 +23,18 @@ jobs:
         VsixManifestSourcePath: src\source.extension.cs
       
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
       with:
         fetch-depth: 0
 
     - name: Version stamping
       id: vsix_version
-      uses: dotnet/nbgv@v0.4
+      uses: dotnet/nbgv@v0.5.1
       with:
         setAllVars: true
 
     - name: 🧰 Setup .NET build dependencies
-      uses: timheuer/bootstrap-dotnet@v1
+      uses: timheuer/bootstrap-dotnet@v2
       with:
         nuget: 'false'
         sdk: 'false'
@@ -52,13 +52,13 @@ jobs:
       run: msbuild ${{ env.PROJECT_PATH }} /p:Configuration=Release /v:m -restore /p:OutDir=\_built -bl
 
     - name: ⬆️ Upload artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: msbuild.binlog
         path: msbuild.binlog
 
     - name: ⬆️ Upload artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: ${{ github.event.repository.name }}.vsix
         path: /_built/**/*.vsix
