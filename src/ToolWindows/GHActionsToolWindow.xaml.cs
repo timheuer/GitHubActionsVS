@@ -28,6 +28,7 @@ public partial class GHActionsToolWindow : UserControl
     private int maxRuns = 10;
     private bool refreshPending = false;
     private int refreshInterval = 5;
+    private bool _isApplyingExpanderStates = false;
     OutputWindowPane _pane;
 
     public GHActionsToolWindow(ToolWindowMessenger toolWindowMessenger)
@@ -99,6 +100,7 @@ public partial class GHActionsToolWindow : UserControl
         maxRuns = generalSettings.MaxRuns;
         refreshInterval = generalSettings.RefreshInterval;
         refreshPending = generalSettings.RefreshActiveJobs;
+        ApplyExpanderStates(generalSettings);
 
         await _pane.WriteLineAsync($"[{DateTime.UtcNow.ToString("o")}] Extension settings retrieved and applied");
 
@@ -158,8 +160,6 @@ public partial class GHActionsToolWindow : UserControl
         tvEnvironments.Header = resx.HEADER_ENVIRONMENTS;
         tvCurrentBranch.ItemsSource = null;
         tvWorkflows.ItemsSource = null;
-        CurrentBranchExpander.IsExpanded = false;
-        WorkflowsExpander.IsExpanded = false;
     }
 
     private async Task LoadDataAsync()
@@ -286,9 +286,56 @@ public partial class GHActionsToolWindow : UserControl
             await ex.LogAsync();
         }
 
-        WorkflowsExpander.IsExpanded = true;
         refreshProgress.Visibility = Visibility.Hidden;
         refreshProgress.IsIndeterminate = false;
+    }
+
+    private void ApplyExpanderStates(ExtensionOptions options)
+    {
+        _isApplyingExpanderStates = true;
+        try
+        {
+            CurrentBranchExpander.IsExpanded = options.CurrentBranchExpanded;
+            WorkflowsExpander.IsExpanded = options.WorkflowsExpanded;
+            SecretsExpander.IsExpanded = options.SecretsExpanded;
+        }
+        finally
+        {
+            _isApplyingExpanderStates = false;
+        }
+    }
+
+    private void Expander_ExpandedOrCollapsed(object sender, RoutedEventArgs e)
+    {
+        if (_isApplyingExpanderStates)
+        {
+            return;
+        }
+
+        ThreadHelper.JoinableTaskFactory.RunAsync(SaveExpanderStatesAsync).FireAndForget();
+    }
+
+    private async Task SaveExpanderStatesAsync()
+    {
+        try
+        {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+            bool currentBranchExpanded = CurrentBranchExpander.IsExpanded;
+            bool workflowsExpanded = WorkflowsExpander.IsExpanded;
+            bool secretsExpanded = SecretsExpander.IsExpanded;
+
+            ExtensionOptions options = await ExtensionOptions.GetLiveInstanceAsync();
+            options.CurrentBranchExpanded = currentBranchExpanded;
+            options.WorkflowsExpanded = workflowsExpanded;
+            options.SecretsExpanded = secretsExpanded;
+
+            await options.SaveAsync();
+        }
+        catch (Exception ex)
+        {
+            await ex.LogAsync();
+        }
     }
 
     private async Task RefreshEnvironmentsAsync(GitHubClient client)
