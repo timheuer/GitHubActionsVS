@@ -159,6 +159,7 @@ public partial class GHActionsToolWindow : UserControl
         tvCurrentBranch.ItemsSource = null;
         tvWorkflows.ItemsSource = null;
         CurrentBranchExpander.IsExpanded = false;
+        WorkflowsExpander.IsExpanded = false;
     }
 
     private async Task LoadDataAsync()
@@ -285,7 +286,7 @@ public partial class GHActionsToolWindow : UserControl
             await ex.LogAsync();
         }
 
-        CurrentBranchExpander.IsExpanded = true;
+        WorkflowsExpander.IsExpanded = true;
         refreshProgress.Visibility = Visibility.Hidden;
         refreshProgress.IsIndeterminate = false;
     }
@@ -603,4 +604,3 @@ public partial class GHActionsToolWindow : UserControl
         }
     }
 }
-

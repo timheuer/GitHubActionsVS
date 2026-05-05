@@ -138,7 +138,7 @@
                             </TreeView.Resources>
                         </TreeView>
                     </Expander>
-                    <Expander Header="{x:Static resx:UIStrings.HEADER_WORKFLOWS}" FontWeight="Bold" ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Header}">
+                    <Expander Header="{x:Static resx:UIStrings.HEADER_WORKFLOWS}" x:Name="WorkflowsExpander" FontWeight="Bold" ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Header}">
                         <TreeView BorderThickness="0" FontWeight="Normal" PreviewMouseWheel="HandlePreviewMouseWheel" x:Name="tvWorkflows" ItemTemplate="{StaticResource WorkflowItemTemplate}"/>
                     </Expander>
                     <Expander Header="{x:Static resx:UIStrings.HEADER_SECRETS}" FontWeight="Bold" ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Header}">
