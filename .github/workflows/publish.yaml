@@ -27,18 +27,18 @@ jobs:
         VERSION: ${{ needs.build.outputs.version }}
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
       with:
         fetch-depth: 0
 
     - name: Download Package artifact
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         name: ${{ github.event.repository.name }}.vsix
 
     - name: Tag and Release
       id: tag_release
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v3
       with:
         body: Release ${{ env.VERSION }}
         tag_name: ${{ env.VERSION }}
@@ -55,7 +55,7 @@ jobs:
       id: publish_vsix
       if: ${{ (github.event_name == 'push' && contains(github.event.head_commit.message, '[release]')) || (github.event_name == 'workflow_dispatch' && contains(github.event.inputs.Command, '[release]')) }}
       continue-on-error: true # remove after VS bug fix
-      uses: cezarypiatek/VsixPublisherAction@1.1
+      uses: cezarypiatek/VsixPublisherAction@1.2
       with:
         extension-file: '${{ github.event.repository.name }}.vsix'
         publish-manifest-file: 'vs-publish.json'
