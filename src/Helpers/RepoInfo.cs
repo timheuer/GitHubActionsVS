@@ -10,39 +10,36 @@ internal class RepoInfo
     public string RepoUrl { get; set; }
     public string CurrentBranch { get; set; }
 
-
-    internal void FindGitFolder(string path, out string foundPath)
+    internal bool TryFindGitFolder(string path, out string foundPath)
     {
         foundPath = null;
-        // Check if the current directory contains a .git folder
-        if (Directory.Exists(Path.Combine(path, ".git")))
+        string currentPath = path;
+
+        while (!string.IsNullOrEmpty(currentPath))
         {
-            foundPath = path;
-            var repo = new LibGit2Sharp.Repository(foundPath);
-            var remote = repo.Network.Remotes.FirstOrDefault();
-            if (remote is not null)
+            // Check if the current directory contains a .git folder
+            if (Directory.Exists(Path.Combine(currentPath, ".git")))
             {
-                var url = remote.Url;
-                if (url.Contains("github.com"))
+                foundPath = currentPath;
+                var repo = new LibGit2Sharp.Repository(foundPath);
+                var remote = repo.Network.Remotes.FirstOrDefault();
+                if (remote is not null)
                 {
-                    IsGitHub = true;
-                    var parts = url.Split('/');
-                    RepoOwner = parts[parts.Length - 2];
-                    RepoName = parts[parts.Length - 1].Replace(".git", "");
-                    RepoUrl = url.Replace(".git", "");
+                    var remoteUri = GitUri.Parse(remote.Url);
+                    RepoOwner = remoteUri.GetRepositoryOwner();
+                    RepoName = remoteUri.GetRepositoryName();
+                    RepoUrl = $"https://{remoteUri.Host}{(remoteUri.Port is not null ? $":{remoteUri.Port}" : "")}/{RepoOwner}/{RepoName}";
                     CurrentBranch = repo.Head.FriendlyName;
+                    IsGitHub = remoteUri.Host == "github.com";
                 }
+
+                return true;
             }
-            return;
+
+            // Move to parent directory
+            currentPath = Directory.GetParent(currentPath)?.FullName;
         }
-        else
-        {
-            string parentPath = Directory.GetParent(path)?.FullName;
-            if (!string.IsNullOrEmpty(parentPath))
-            {
-                FindGitFolder(parentPath, out foundPath); // Recursively search the parent directory
-            }
-        }
-        return;
+
+        return false;
     }
 }
